@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Represents a Sword Piece in an RPS x Chess Game.
+/// It's targets are a Bow pieces.
+/// 
+/// It moves consists of 8 tiles: 
+/// - Up
+/// - Upper Left
+/// - Left
+/// - Lower Left
+/// - Down
+/// - Lower Right
+/// - Right
+/// - Upper Right
+/// </summary>
+public class Sword : AAttackingPiece
+{
+    public Sword(int pos, int pieceType, int targetType) : base(pos, pieceType, targetType)
+    {
+         if (targetType != -1 && targetType != 1)
+        {
+            UnityEngine.Debug.Log("Sword target type " + targetType);
+            throw new ArgumentException("Sword's can only attack Pegasi!", nameof(targetType));
+        }
+        else if (pieceType != 2 && pieceType != -2)
+        {
+            UnityEngine.Debug.Log("Sword type" + pieceType);
+            throw new ArgumentException("Sword's can only be of type 1 or -1", nameof(pieceType));
+        }
+     }
+
+    public override List<int> GetMoveTiles()
+     {
+        List<int> possibleMoves = new List<int>();
+
+        int up = _pos - 11;
+        int down = _pos + 11;
+        int left = _pos - 1;
+        int right = _pos + 1;
+
+        possibleMoves.Add(up);
+        possibleMoves.Add(down);
+        possibleMoves.Add(left);
+        possibleMoves.Add(right);
+
+        return possibleMoves;
+    }
+}
