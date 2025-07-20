@@ -27,8 +27,6 @@ public class Bow : AAttackingPiece
         {
             throw new ArgumentException("Bow's can only be of type 1 or -1", nameof(pieceType));
         }
-
-        Debug.Log("[Bow] constructed");
     }
 
     public override List<int> GetMoveTiles()

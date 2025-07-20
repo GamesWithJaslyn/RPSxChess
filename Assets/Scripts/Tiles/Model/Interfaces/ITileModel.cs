@@ -30,19 +30,13 @@ public interface ITileModel
     /// Gets the type of this ITile.
     /// </summary>
     /// <returns> The int representing the type of this ITile. </returns>
-    int GetType();
+    int GetTileType();
 
     /// <summary>
     /// Gets this ITile.
     /// </summary>
     /// <returns> A TileType representing this ITile. </returns>
     ITileModel GetTile();
-
-    /// <summary>
-    /// Sets the IPiece on this ITile.
-    /// If the pieceType is 0, it will remove the piece from this ITile.
-    /// </summary>
-    void Enter(int pieceType);
 
     /// <summary>
     /// Checks if this ITile is occupied by an IPiece.

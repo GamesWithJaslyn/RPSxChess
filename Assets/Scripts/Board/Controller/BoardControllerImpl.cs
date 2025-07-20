@@ -3,7 +3,6 @@ using UnityEngine;
 public class BoardControllerImpl : MonoBehaviour
 {
     public IBoardModel boardModel;
-    public BoardView boardView;
 
     // public void Start()
     // {
@@ -11,7 +10,6 @@ public class BoardControllerImpl : MonoBehaviour
     //     boardModel = new IBoardModel();
     //     boardModel.SetupInitialBoard();
 
-    //     boardView = new BoardView();
     //     boardView.Initialize(boardModel, this)
     //     // Set up the board view with the model
     //     boardView.Setup(boardModel);
