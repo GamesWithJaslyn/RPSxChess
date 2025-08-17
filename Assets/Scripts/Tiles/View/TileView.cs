@@ -20,7 +20,7 @@ public class TileView : MonoBehaviour
     /// <summary>
     /// Highlights the tile by changing its color.
     /// </summary>
-    void HightLight()
+    private void HightLight()
     {
         GetComponent<Renderer>().material.color = highlightColor; // Change to highlight color
     }
@@ -28,7 +28,7 @@ public class TileView : MonoBehaviour
     /// <summary>
     /// Unhighlights the tile by resetting its color to default.
     /// </summary>
-    void UnHighlight()
+    private void UnHighlight()
     {
         GetComponent<Renderer>().material.color = defaultColor; // Reset to default color
     }

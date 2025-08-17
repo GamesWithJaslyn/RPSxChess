@@ -9,6 +9,7 @@ public class BoardModelImpl : IBoardModel
     private bool _bluesTurn;
     private AAttackingPiece _selectedPiece;
     private CreatePieces _createPieces = new CreatePieces();
+    private CreateTiles _createTiles = new CreateTiles();
 
     public BoardModelImpl()
     {
@@ -17,22 +18,9 @@ public class BoardModelImpl : IBoardModel
         _bluesTurn = true;
         _selectedPiece = null;
 
-        _allTiles = InstantiateTiles();
+        _allTiles = _createTiles.GetTiles();
         _allPieces = _createPieces.GetPieces();
         Debug.Log("Pieces count: _allPieces.Count");
-    }
-
-     private List<ITileModel> InstantiateTiles() 
-    {
-        List<ITileModel> tilesList = new List<ITileModel>();
-
-        for (int i = 0; i < 121; i++)
-        {
-            ITileModel tile = new RegularTile(i, 0, null);
-            tilesList.Add(tile);
-        }
-
-        return tilesList;
     }
 
     public AAttackingPiece SelectPiece(int pos)

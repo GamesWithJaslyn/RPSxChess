@@ -7,10 +7,10 @@ public class CreateTiles : MonoBehaviour
 
     public CreateTiles()
     {
-        _allTiles = InstantiateTiles();
+        _allTiles = GetTiles();
     }
     
-    private List<ITileModel> InstantiateTiles() 
+    public List<ITileModel> GetTiles() 
     {
         List<ITileModel> tilesList = new List<ITileModel>();
 
