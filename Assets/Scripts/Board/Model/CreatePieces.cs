@@ -115,13 +115,13 @@ public class CreatePieces
     {
         List<AAttackingPiece> redBows = new List<AAttackingPiece>();
 
-        for (int i = 98; i < 101; i++)
+        for (int i = 99; i < 102; i++)
         {
             AAttackingPiece redBow = new Bow(i, -1, 3);
             redBows.Add(redBow);
         }
 
-        for (int i = 109; i < 112; i++)
+        for (int i = 110; i < 113; i++)
         {
             AAttackingPiece redBow = new Bow(i, -1, 3);
             redBows.Add(redBow);
@@ -138,13 +138,13 @@ public class CreatePieces
     {
         List<AAttackingPiece> redSwords = new List<AAttackingPiece>();
 
-        for (int i = 102; i < 105; i++)
+        for (int i = 103; i < 106; i++)
         {
             AAttackingPiece redSword = new Sword(i, -2, 1);
             redSwords.Add(redSword);
         }
 
-        for (int i = 113; i < 116; i++)
+        for (int i = 114; i < 117; i++)
         {
             AAttackingPiece redSword = new Sword(i, -2, 1);
             redSwords.Add(redSword);
@@ -161,13 +161,13 @@ public class CreatePieces
     {
         List<AAttackingPiece> redPegasi = new List<AAttackingPiece>();
 
-        for (int i = 106; i < 109; i++)
+        for (int i = 107; i < 110; i++)
         {
             AAttackingPiece redPegasus = new Pegasus(i, -3, 2);
             redPegasi.Add(redPegasus);
         }
 
-        for (int i = 117; i < 120; i++)
+        for (int i = 118; i < 121; i++)
         {
             AAttackingPiece redPegasus = new Pegasus(i, -3, 2);
             redPegasi.Add(redPegasus);

@@ -50,8 +50,14 @@ public interface IBoardModel
     /// <summary>
     /// Gets all Tiles on the board.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> Returns a List containing all tiles on the board. </returns>
     List<ITileModel> GetAllTiles();
+
+    /// <summary>
+    /// Gets all enterable Tiles on the board.
+    /// </summary>
+    /// <returns> Returns a List containing all enterable tiles on the board. </returns>
+    List<IEnterAndLeave> GetAllEnterableTiles();
 
     /// <summary>
     /// Resets the board to its initial state.

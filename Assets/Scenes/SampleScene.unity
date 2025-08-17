@@ -371,6 +371,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _regularTile: {fileID: 7214029128800565506, guid: 9a4896170776b47ce98474417dcd93b1, type: 3}
   _cam: {fileID: 519420032}
+  _blueBow: {fileID: 645273168107628068, guid: 6c19c3b38c28a4009bc893d7c10a6f11, type: 3}
+  _blueSword: {fileID: 7281583348763489357, guid: 274f27a206d724ac6bc2309d541cde2d, type: 3}
+  _bluePegasus: {fileID: 837491120500877806, guid: 1fa8e62115fa1420b9d34163d6562e6f, type: 3}
+  _redBow: {fileID: 9011587277158008105, guid: 095e807d229ca4433abd0e6a248d7895, type: 3}
+  _redSword: {fileID: 1307319081870978355, guid: 6dadf70d45b0a4a69942b80d6118fb7b, type: 3}
+  _redPegasus: {fileID: 7992460254816947254, guid: 95045c2dfb3e34176ab971238852d728, type: 3}
 --- !u!4 &1740619444
 Transform:
   m_ObjectHideFlags: 0

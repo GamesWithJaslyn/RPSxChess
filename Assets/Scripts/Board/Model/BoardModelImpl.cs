@@ -4,8 +4,8 @@ using UnityEngine;
 public class BoardModelImpl : IBoardModel
 {
     public static List<AAttackingPiece> _allPieces;
-
-    private List<ITileModel> _allTiles;
+    public static List<ITileModel> _allTiles;
+    
     private bool _bluesTurn;
     private AAttackingPiece _selectedPiece;
     private CreatePieces _createPieces = new CreatePieces();
@@ -42,6 +42,17 @@ public class BoardModelImpl : IBoardModel
     public List<ITileModel> GetAllTiles()
     {
         return _allTiles;
+    }
+
+    public List<IEnterAndLeave> GetAllEnterableTiles()
+    {
+        List<IEnterAndLeave> list = new List<IEnterAndLeave>();
+        foreach (EnterAndLeaveTile tile in _allTiles)
+        {
+            list.Add(tile);
+        }
+
+        return list;
     }
 
     public bool IsBlueTurn()
