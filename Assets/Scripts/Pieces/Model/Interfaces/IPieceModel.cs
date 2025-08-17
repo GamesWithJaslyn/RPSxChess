@@ -13,7 +13,6 @@ using System.Collections.Generic;
 /// </summary>
 public interface IPieceModel
 {
-
     /// <summary>
     /// Sets the position of this IPiece on the board.
     /// - int tile: The number of a tile on the board.
@@ -23,7 +22,7 @@ public interface IPieceModel
     /// <summary>
     /// Gets the position of this IPiece.
     /// </summary>
-    /// returns> The int representing the ID of the tile this IPiece is on. </returns>
+    /// <returns> The int representing the ID of the tile this IPiece is on. </returns>
     int GetPos();
 
     /// <summary>
@@ -81,5 +80,10 @@ public interface IPieceModel
     /// Changes this IPiece's type into the given one.
     /// <summary>
     void ChangeInto(int newType);
+
+    /// <summary>
+    /// Checks if it's possible for this IPiece to change.
+    /// <summary>
+    bool CanChange();
 
 }

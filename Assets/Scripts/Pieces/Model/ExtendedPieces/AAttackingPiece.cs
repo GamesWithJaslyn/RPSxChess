@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Represents an IPiece that can Attack other pieces.
 /// </summary>
-public abstract class AAttackingPiece : ABasicPiece
+public abstract class AAttackingPiece : ABasicPiece, IPieceModel
 {
     protected ITargets _targets;
     protected int _targetType;

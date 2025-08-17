@@ -22,7 +22,7 @@ public class TargetsImpl : ITargets
         _targetType = targetType;
         _targetTypeList.Add(_targetType);
 
-        foreach (IPieceModel model in ABasicPiece._allPieces)
+        foreach (IPieceModel model in BoardModelImpl._allPieces)
         {
             if (model is AAttackingPiece attacker && attacker.GetPieceType() == _piece.GetTargetType() && attacker.IsAlive())
             {

@@ -3,14 +3,25 @@ using UnityEngine;
 
 public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
 {
-    public EnterAndLeaveTile(int id, int type, IPieceModel piece) : base (id, type, piece)
+    protected IPieceModel _piece;
+    protected bool _occupied;
+
+
+    public EnterAndLeaveTile(int id, int type, IPieceModel piece) : base(id, type)
     {
         _id = id;
         _type = type;
         _occupied = piece != null;
         _piece = piece;
     }
-      public void Enter(IPieceModel piece)
+
+
+    public IPieceModel GetPiece()
+    {
+        return _piece;
+    }
+
+    public void Enter(IPieceModel piece)
     {
         if (_piece == null)
         {
@@ -32,5 +43,10 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
         {
             throw new InvalidOperationException("Tile is already empty!");
         }
+    }
+    
+      public bool IsOccupied()
+    {
+        return _piece != null;
     }
 }

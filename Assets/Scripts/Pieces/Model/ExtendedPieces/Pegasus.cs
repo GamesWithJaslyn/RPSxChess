@@ -44,15 +44,29 @@ public class Pegasus : AAttackingPiece
      {
         List<int> possibleMoves = new List<int>();
 
+        int upUp = _pos - 22;
         int up = _pos - 11;
+        int upRight = _pos - 10;
+        int upLeft = _pos - 12;
         int down = _pos + 11;
+        int downDown = _pos + 22;
+        int downRight = _pos + 10;
+        int downLeft = _pos + 12;
         int left = _pos - 1;
+        int leftLeft = _pos - 2;
         int right = _pos + 1;
+        int rightRight = _pos + 2;
 
         possibleMoves.Add(up);
+        possibleMoves.Add(upRight);
+        possibleMoves.Add(upLeft);
         possibleMoves.Add(down);
+        possibleMoves.Add(downRight);
+        possibleMoves.Add(downLeft);
         possibleMoves.Add(left);
+        possibleMoves.Add(leftLeft);
         possibleMoves.Add(right);
+        possibleMoves.Add(rightRight);
 
         return possibleMoves;
     }

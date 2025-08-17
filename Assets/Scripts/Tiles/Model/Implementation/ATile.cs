@@ -3,21 +3,17 @@ using System;
 public abstract class ATile : ITileModel
 {
     protected int _id;
-    protected bool _occupied;
-    protected IPieceModel _piece;
     protected int _type;
 
-    public ATile(int id, int type, IPieceModel piece)
+    public ATile(int id, int type)
     {
+        if (id < 0)
+        {
+            throw new ArgumentException("Tile ID cannot be negative!");
+        }
+
         _id = id;
         _type = type;
-        _occupied = piece != null;
-        _piece = piece;
-    }
-
-    public IPieceModel GetPiece()
-    {
-        return _piece;
     }
 
     public int GetID()
@@ -34,10 +30,5 @@ public abstract class ATile : ITileModel
     public ITileModel GetTile()
     {
         return this;
-    }
-
-    public bool IsOccupied()
-    {
-        return _piece != null;
     }
 }

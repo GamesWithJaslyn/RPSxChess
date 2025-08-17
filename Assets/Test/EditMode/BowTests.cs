@@ -7,6 +7,7 @@ using UnityEngine.TestTools;
 
 public class BowTests
 {
+    private IBoardModel _boardModel;
     private AAttackingPiece _blueBow;
     private AAttackingPiece _redBow;
     private AAttackingPiece _blueTarget;
@@ -16,13 +17,20 @@ public class BowTests
     [SetUp]
     public void SetUp()
     {
-        ABasicPiece._allPieces.Clear();
+        _boardModel = new BoardModelImpl();
+        
+        BoardModelImpl._allPieces.Clear();
 
         _blueBow = new Bow(39, 1, -3);
         _redBow = new Bow(28, -1, 3);
 
         _blueTarget = new Pegasus(38, -3, 2);
         _redTarget = new Pegasus(27, 3, -2);
+
+        _boardModel.AddPiece(_blueBow);
+        _boardModel.AddPiece(_redBow);
+        _boardModel.AddPiece(_blueTarget);
+        _boardModel.AddPiece(_redTarget);
     }
 
     [Test]
@@ -132,43 +140,47 @@ public class BowTests
     [Test]
     public void ChangedInto_ReachesOtherSideForFirstTime_ChangeType()
     {
-        Assert.AreEqual(1, _blueBow.GetPieceType());
-        _blueBow.SetPos(15);
-        _blueBow.ChangeInto(3);
-        Assert.AreNotEqual(3, _blueBow.GetPieceType());
+        Assert.AreEqual(-1, _redBow.GetPieceType());
+        _redBow.SetPos(12);
+        Assert.Throws<ArgumentException>(() =>  _redBow.ChangeInto(-3));
+        Assert.AreNotEqual(-3, _redBow.GetPieceType());
 
-        _blueBow.SetPos(8);
-        _blueBow.ChangeInto(3);
-        Assert.AreEqual(3, _blueBow.GetPieceType());
-
-        _blueBow.SetPos(9);
-        _blueBow.ChangeInto(2);
-        Assert.AreEqual(3, _blueBow.GetPieceType());
-
+        _redBow.SetPos(8);
+        _redBow.ChangeInto(-3);
+        Assert.AreEqual(-3, _redBow.GetPieceType());
     }
 
     [Test]
     public void ChangedInto_ReachesOtherSideAfterFirstTime_NoChange()
     {
-        Assert.AreEqual(1, _blueBow.GetPieceType());
-        _blueBow.SetPos(15);
-        _blueBow.ChangeInto(3);
-        Assert.AreNotEqual(3, _blueBow.GetPieceType());
+        Assert.AreEqual(-1, _redBow.GetPieceType());
+        _redBow.SetPos(12);
+        Assert.Throws<ArgumentException>(() =>  _redBow.ChangeInto(-3));
+        Assert.AreNotEqual(-3, _redBow.GetPieceType());
 
-        _blueBow.SetPos(8);
-        _blueBow.ChangeInto(3);
-        Assert.AreEqual(3, _blueBow.GetPieceType());
+        _redBow.SetPos(8);
+        _redBow.ChangeInto(-3);
+        Assert.AreEqual(-3, _redBow.GetPieceType());
 
-        _blueBow.SetPos(9);
-        _blueBow.ChangeInto(2);
-        Assert.AreNotEqual(2, _blueBow.GetPieceType());
+        _redBow.SetPos(9);
+        Assert.Throws<ArgumentException>(() =>  _redBow.ChangeInto(-2));
+        Assert.AreEqual(-3, _redBow.GetPieceType());
 
         _blueBow.SetPos(105);
-        _blueBow.ChangeInto(2);
+        Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(2));
         Assert.AreNotEqual(2, _blueBow.GetPieceType());
         
         _blueBow.SetPos(119);
         _blueBow.ChangeInto(1);
-        Assert.AreEqual(3, _blueBow.GetPieceType());
+        Assert.AreEqual(1, _blueBow.GetPieceType());
+
+        _blueBow.SetPos(105);
+        Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(2));
+        Assert.AreNotEqual(2, _blueBow.GetPieceType());
+        
+        _blueBow.SetPos(119);
+        Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(3));
+        Assert.AreNotEqual(3, _blueBow.GetPieceType());
+        Assert.AreEqual(1, _blueBow.GetPieceType());
     }
 }

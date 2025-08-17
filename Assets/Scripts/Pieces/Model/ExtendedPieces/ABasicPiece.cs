@@ -13,8 +13,7 @@ public abstract class ABasicPiece : IPieceModel
     protected int _changingInto;
 
     public static List<IPieceModel> _allPieces = new List<IPieceModel>();
-
-
+    
     public ABasicPiece(int pos, int pieceType)
     {
         _pos = pos;
@@ -23,10 +22,6 @@ public abstract class ABasicPiece : IPieceModel
         _isSelected = false;
         _isAlive = true;
         _firstTimeChanging = true;
-
-        Debug.Log($"[ABasicPiece] Constructed {this.GetType().Name} at pos {_pos}, type {_pieceType}");
-    _allPieces.Add(this);
-    Debug.Log($"[ABasicPiece] _allPieces count: {_allPieces.Count}");
     }
 
     public abstract List<int> GetMoveTiles();
@@ -64,7 +59,8 @@ public abstract class ABasicPiece : IPieceModel
 
     public void SetSelected() {
         _isSelected = true;
-        foreach (IPieceModel piece in _allPieces)
+
+        foreach (IPieceModel piece in BoardModelImpl._allPieces)
         {
             if (piece != this)
             {
@@ -104,20 +100,31 @@ public abstract class ABasicPiece : IPieceModel
     {
         if (CanChange()) 
         {
-            SetPieceType(changingInto);
-            _firstTimeChanging = false;
+            if((_pieceType > 0 && changingInto > 0) || (_pieceType < 0 && changingInto < 0))
+            {
+                SetPieceType(changingInto);
+                _firstTimeChanging = false;
+            }
+            else 
+            {
+                throw new System.ArgumentException("Change has to be from the same team!");
+            }
         } 
+        else 
+        {
+            throw new System.ArgumentException("Cannot change piece type at this time.");
+        }
     }
 
-    private bool CanChange()
+    public bool CanChange()
     {
         bool location;
 
-        if (_pieceType > 0 && _pos >= 0 && _pos < 11)
+        if (_pieceType < 0 && _pos >= 0 && _pos < 11)
         {
             location = true;
         } 
-        else if (_pieceType < 0 && _pos >= 110 && _pos < 121)
+        else if (_pieceType > 0 && _pos >= 109 && _pos < 121)
         {
             location = true;
         } 

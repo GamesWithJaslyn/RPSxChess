@@ -22,7 +22,7 @@ public class Sword : AAttackingPiece
          if (targetType != -1 && targetType != 1)
         {
             UnityEngine.Debug.Log("Sword target type " + targetType);
-            throw new ArgumentException("Sword's can only attack Pegasi!", nameof(targetType));
+            throw new ArgumentException("Sword's can only attack Bows!", nameof(targetType));
         }
         else if (pieceType != 2 && pieceType != -2)
         {
@@ -36,12 +36,20 @@ public class Sword : AAttackingPiece
         List<int> possibleMoves = new List<int>();
 
         int up = _pos - 11;
+        int upRight = _pos - 10;
+        int upLeft = _pos - 12;
         int down = _pos + 11;
+        int downRight = _pos + 10;
+        int downLeft = _pos + 12;
         int left = _pos - 1;
         int right = _pos + 1;
 
         possibleMoves.Add(up);
+        possibleMoves.Add(upRight);
+        possibleMoves.Add(upLeft);
         possibleMoves.Add(down);
+        possibleMoves.Add(downRight);
+        possibleMoves.Add(downLeft);
         possibleMoves.Add(left);
         possibleMoves.Add(right);
 

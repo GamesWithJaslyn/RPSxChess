@@ -11,14 +11,6 @@
 /// </summary>
 public interface ITileModel
 {
-    /// <summary>
-    /// Gets the IPiece on this ITile.
-    /// <br/>
-    /// If there is no piece on this ITile, it will return null.
-    /// <br/>
-    /// </summary>
-    /// <returns> An IPieceModel representing the piece on this ITile. </returns>
-    IPieceModel GetPiece();
 
     /// <summary>
     /// Gets the ID of this ITile.
@@ -37,12 +29,5 @@ public interface ITileModel
     /// </summary>
     /// <returns> A TileType representing this ITile. </returns>
     ITileModel GetTile();
-
-    /// <summary>
-    /// Checks if this ITile is occupied by an IPiece.
-    /// If this Tile has 0 as its piece type, it is considered unoccupied.
-    /// </summary>
-    /// <returns> A boolean indicating whether this ITile is occupied. </returns>
-    bool IsOccupied();
 
 }
