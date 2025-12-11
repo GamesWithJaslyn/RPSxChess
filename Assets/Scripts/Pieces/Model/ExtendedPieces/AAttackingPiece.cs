@@ -10,7 +10,7 @@ public abstract class AAttackingPiece : ABasicPiece, IPieceModel
     protected ITargets _targets;
     protected int _targetType;
 
-    public AAttackingPiece(int pos, int pieceType, int targetType) : base(pos, pieceType)
+    public AAttackingPiece(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, model)
     {
         if (pieceType > 0 && targetType > 0 || pieceType < 0 && targetType < 0)
         {

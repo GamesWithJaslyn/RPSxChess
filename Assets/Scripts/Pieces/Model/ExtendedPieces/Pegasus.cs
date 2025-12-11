@@ -23,7 +23,7 @@ using UnityEngine;
 /// </summary>
 public class Pegasus : AAttackingPiece
 {
-    public Pegasus(int pos, int pieceType, int targetType) : base(pos, pieceType, targetType)
+    public Pegasus(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, targetType, model)
     {
         if (targetType != -2 && targetType != 2)
         {
@@ -57,10 +57,12 @@ public class Pegasus : AAttackingPiece
         int right = _pos + 1;
         int rightRight = _pos + 2;
 
+        possibleMoves.Add(upUp);
         possibleMoves.Add(up);
         possibleMoves.Add(upRight);
         possibleMoves.Add(upLeft);
         possibleMoves.Add(down);
+        possibleMoves.Add(downDown);
         possibleMoves.Add(downRight);
         possibleMoves.Add(downLeft);
         possibleMoves.Add(left);

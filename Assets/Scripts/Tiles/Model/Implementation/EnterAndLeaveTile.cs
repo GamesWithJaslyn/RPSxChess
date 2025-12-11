@@ -5,6 +5,7 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
 {
     protected IPieceModel _piece;
     protected bool _occupied;
+    public bool _isValidMoveTileForAPiece;
 
 
     public EnterAndLeaveTile(int id, int type, IPieceModel piece) : base(id, type)
@@ -13,7 +14,18 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
         _type = type;
         _occupied = piece != null;
         _piece = piece;
+        _isValidMoveTileForAPiece = false;
     }
+
+    public void IsValidTile_CanMoveHere(bool isValid)
+    {
+        _isValidMoveTileForAPiece = isValid;
+    }
+
+    public bool CanPieceMoveHere()
+    {
+        return _isValidMoveTileForAPiece;
+    } 
 
 
     public IPieceModel GetPiece()

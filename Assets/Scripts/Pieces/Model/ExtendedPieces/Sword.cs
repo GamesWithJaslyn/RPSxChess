@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// </summary>
 public class Sword : AAttackingPiece
 {
-    public Sword(int pos, int pieceType, int targetType) : base(pos, pieceType, targetType)
+    public Sword(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, targetType, model)
     {
          if (targetType != -1 && targetType != 1)
         {

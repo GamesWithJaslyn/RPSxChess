@@ -6,10 +6,12 @@ using UnityEngine.TestTools;
 public class CreatePiecesTest
 {
     private CreatePieces _createPieces;
+    private IBoardModel _boardModel;
     [SetUp]
     public void SetUp()
     {
-        _createPieces = new CreatePieces();
+        _boardModel = new BoardModelImpl();
+        _createPieces = new CreatePieces(_boardModel);
     }
 
     [Test]

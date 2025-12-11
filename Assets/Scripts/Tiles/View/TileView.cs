@@ -7,29 +7,62 @@ using UnityEngine;
 /// </summary>
 public class TileView : MonoBehaviour
 {
-    public Color defaultColor;
-    public Color highlightColor;
-    void Start()
+    [Header("Tile Properties")]
+    public IEnterAndLeave _model { get; private set; }
+    public TilePresenter _presenter { get; private set; }
+    [SerializeField] private int _id;
+    [SerializeField] private int _type;
+    
+    [Header("Tile Colors")]
+    [SerializeField] Color32 _baseColor = new Color32(152, 87, 95, 255);
+    [SerializeField] Color32 _offsetColor = new Color32(202, 154, 192, 255);
+    [SerializeField] Color32 _highlightColorBase = new Color32(217, 126, 41, 255);
+    [SerializeField] Color32 _highlightColorOffset = new Color32(237, 214, 123, 255);
+    [SerializeField] Color32 _currentColor;
+
+    private IBoardModel _boardModel;
+
+    // Assign a model instance to this view
+    public void Init(IEnterAndLeave model, IBoardModel boardModel)
     {
-        // Initialize the tile view, if needed
-        defaultColor = Color.white;
-        highlightColor = Color.yellow;
-        GetComponent<Renderer>().material.color = defaultColor; // Set the default color
+        _model = model;
+        _boardModel = boardModel;
+        _id = model.GetID();
+        _type = model.GetTileType();
+        _presenter = new TilePresenter(this, model, _boardModel);
+
+        var isOffset = _id % 2 == 1;
+        SpriteRenderer ren = this.GetComponent<SpriteRenderer>();
+        ren.color = isOffset ? _offsetColor : _baseColor;
+        _currentColor = ren.color;
+    }
+
+    void OnMouseDown()
+    {
+        Debug.Log("[Tile View] - Clicked on a Tile");
+        _presenter.ClickedOn();
     }
 
     /// <summary>
     /// Highlights the tile by changing its color.
     /// </summary>
-    private void HightLight()
+    public void HightLight()
     {
-        GetComponent<Renderer>().material.color = highlightColor; // Change to highlight color
+        var isOffset = _id % 2 == 1;
+        this.GetComponent<SpriteRenderer>().color = isOffset ? _highlightColorOffset : _highlightColorBase;
     }
 
     /// <summary>
     /// Unhighlights the tile by resetting its color to default.
     /// </summary>
-    private void UnHighlight()
+    public void UnHighlight()
     {
-        GetComponent<Renderer>().material.color = defaultColor; // Reset to default color
+        GetComponent<SpriteRenderer>().color = _currentColor; // Reset to default color
+    }
+
+
+    public IEnterAndLeave GetTileModel()
+    {
+        return _model;
     }
 }

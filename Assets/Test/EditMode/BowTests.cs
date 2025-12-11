@@ -18,14 +18,12 @@ public class BowTests
     public void SetUp()
     {
         _boardModel = new BoardModelImpl();
-        
-        BoardModelImpl._allPieces.Clear();
 
-        _blueBow = new Bow(39, 1, -3);
-        _redBow = new Bow(28, -1, 3);
+        _blueBow = new Bow(39, 1, -3, _boardModel);
+        _redBow = new Bow(28, -1, 3, _boardModel);
 
-        _blueTarget = new Pegasus(38, -3, 2);
-        _redTarget = new Pegasus(27, 3, -2);
+        _blueTarget = new Pegasus(38, -3, 2, _boardModel);
+        _redTarget = new Pegasus(27, 3, -2, _boardModel);
 
         _boardModel.AddPiece(_blueBow);
         _boardModel.AddPiece(_redBow);
@@ -36,12 +34,12 @@ public class BowTests
     [Test]
     public void ExceptionsTest_WhenPieceAndTargetAreInSameTeam_ThrowsException()
     {
-        Assert.Throws<ArgumentException>(() => new Bow(39, 1, 3));
-        Assert.Throws<ArgumentException>(() => new Bow(39, -1, -3));
-        Assert.Throws<ArgumentException>(() => new Bow(39, 1, -2));
-        Assert.Throws<ArgumentException>(() => new Bow(39, -1, 1));
-        Assert.Throws<ArgumentException>(() => new Bow(39, -2, 3));
-        Assert.Throws<ArgumentException>(() => new Bow(39, 0, 3));
+        Assert.Throws<ArgumentException>(() => new Bow(39, 1, 3, _boardModel));
+        Assert.Throws<ArgumentException>(() => new Bow(39, -1, -3, _boardModel));
+        Assert.Throws<ArgumentException>(() => new Bow(39, 1, -2, _boardModel));
+        Assert.Throws<ArgumentException>(() => new Bow(39, -1, 1, _boardModel));
+        Assert.Throws<ArgumentException>(() => new Bow(39, -2, 3, _boardModel));
+        Assert.Throws<ArgumentException>(() => new Bow(39, 0, 3, _boardModel));
     }
 
     [Test]
@@ -106,15 +104,15 @@ public class BowTests
     [Test]
     public void TargetTiles_TargetsStillAlive_ReturnsTileNumbers()
     {
-        ITargets blueBowTarget = new TargetsImpl(_blueBow, -3);
-        ITargets redBowTarget = new TargetsImpl(_redBow, 3);
+        ITargets blueBowTarget = new TargetsImpl(_blueBow, -3, _boardModel);
+        ITargets redBowTarget = new TargetsImpl(_redBow, 3, _boardModel);
 
-        List<int> blueTargetTiles = new List<int> { 38 };
-        List<int> redTargetTiles = new List<int>{27};
+        List<int> blueTargetTiles = new List<int> { 107, 108, 109, 118, 119, 120, 38 };
+        List<int> redTargetTiles = new List<int>{ 8, 9, 10, 19, 20, 21, 27};
 
 
-        Assert.AreEqual(blueTargetTiles, blueBowTarget.GetTargetTiles());
-        Assert.AreEqual(new List<int>{27}, redBowTarget.GetTargetTiles());
+        CollectionAssert.AreEqual(blueTargetTiles, blueBowTarget.GetTargetTiles());
+        CollectionAssert.AreEqual(redTargetTiles, redBowTarget.GetTargetTiles());
     }
 
     [Test]

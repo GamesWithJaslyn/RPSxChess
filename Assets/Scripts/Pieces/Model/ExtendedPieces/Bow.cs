@@ -17,7 +17,7 @@ using UnityEngine.TestTools;
 /// </summary>
 public class Bow : AAttackingPiece
 {
-    public Bow(int pos, int pieceType, int targetType) : base(pos, pieceType, targetType)
+    public Bow(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, targetType, model)
     {
         if (targetType != -3 && targetType != 3)
         {

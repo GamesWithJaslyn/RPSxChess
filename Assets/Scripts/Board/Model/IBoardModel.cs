@@ -10,11 +10,15 @@ public interface IBoardModel
     /// <returns> Returns the Piece that matches the position given.</returns>
     AAttackingPiece SelectPiece(int pos);
 
+    void UnSelectPiece();
+
     /// <summary>
     /// Adds a Piece to the Board.
     /// </summary>
     /// <param name="piece"> The piece being added to the board</param>
     void AddPiece(AAttackingPiece piece);
+
+    public bool TryMovePiece(int toTile);
 
     /// <summary>
     /// Moves the Selected Piece 
@@ -58,6 +62,19 @@ public interface IBoardModel
     /// </summary>
     /// <returns> Returns a List containing all enterable tiles on the board. </returns>
     List<IEnterAndLeave> GetAllEnterableTiles();
+
+    /// <summary>
+    /// Sets the valid move tiles for the selected piece.
+    /// </summary>
+    /// <param name="validMoveTiles"> A List of integers representing the valid move tiles. </param>
+    void SetTilesAsValidMoveTiles(List<int> validMoveTiles);
+
+    void UnHighlightAllTiles();
+
+
+    void SetPieceViewList(List<GameObject> pieceViews);
+
+    void SetTileViewList(List<GameObject> tileViews);
 
     /// <summary>
     /// Resets the board to its initial state.

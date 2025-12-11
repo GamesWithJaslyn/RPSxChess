@@ -14,12 +14,15 @@ public class RegularTileTests
     private IEnterAndLeave _tileTwo;
     private IEnterAndLeave _tileThree;
 
+    private IBoardModel _boardModel;
+
     [SetUp]
     public void SetUp()
     {
-        _blueBow = new Bow(39, 1, -3);
-        _redBow = new Bow(28, -1, 3);
-        _bluePegasus = new Pegasus(38, -3, 2);
+        _boardModel = new BoardModelImpl();
+        _blueBow = new Bow(39, 1, -3, _boardModel);
+        _redBow = new Bow(28, -1, 3, _boardModel);
+        _bluePegasus = new Pegasus(38, -3, 2, _boardModel);
 
         _tileOne = new RegularTile(1, 0, _redBow);
         _tileTwo = new RegularTile(2, 0, _blueBow);

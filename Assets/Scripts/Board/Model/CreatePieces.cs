@@ -6,32 +6,34 @@ using System.Collections.Generic;
 public class CreatePieces
 {
     private List<AAttackingPiece> _allPieces;
+    private IBoardModel _boardModel;
 
-    public CreatePieces()
+    public CreatePieces(IBoardModel model)
     {
         _allPieces = new List<AAttackingPiece>();
         _allPieces.Clear();
+        _boardModel = model;
 
         _allPieces.AddRange(CreateBlueBows());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         _allPieces.AddRange(CreateRedBows());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         _allPieces.AddRange(CreateBlueSwords());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         _allPieces.AddRange(CreateRedSwords());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         _allPieces.AddRange(CreateBluePegasus());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         _allPieces.AddRange(CreateRedPegasus());
-                Debug.Log("------------------------");
+        Debug.Log("------------------------");
 
         Debug.Log($"[CreatePieces] Total pieces created: {_allPieces.Count}");
-    
+
     }
 
     public List<AAttackingPiece> GetPieces()
@@ -49,13 +51,13 @@ public class CreatePieces
 
         for (int i = 0; i < 3; i++)
         {
-            AAttackingPiece blueBow = new Bow(i, 1, -3);
+            AAttackingPiece blueBow = new Bow(i, 1, -3, _boardModel);
             blueBows.Add(blueBow);
         }
 
         for (int i = 11; i < 14; i++)
         {
-            AAttackingPiece blueBow = new Bow(i, 1, -3);
+            AAttackingPiece blueBow = new Bow(i, 1, -3, _boardModel);
             blueBows.Add(blueBow);
         }
         return blueBows;
@@ -71,13 +73,13 @@ public class CreatePieces
 
         for (int i = 4; i < 7; i++)
         {
-            AAttackingPiece blueSword = new Sword(i, 2, -1);
+            AAttackingPiece blueSword = new Sword(i, 2, -1, _boardModel);
             blueSwords.Add(blueSword);
         }
 
         for (int i = 15; i < 18; i++)
         {
-            AAttackingPiece blueSword = new Sword(i, 2, -1);
+            AAttackingPiece blueSword = new Sword(i, 2, -1, _boardModel);
             blueSwords.Add(blueSword);
         }
 
@@ -94,13 +96,13 @@ public class CreatePieces
 
         for (int i = 8; i < 11; i++)
         {
-            AAttackingPiece bluePegasus = new Pegasus(i, 3, -2);
+            AAttackingPiece bluePegasus = new Pegasus(i, 3, -2, _boardModel);
             bluePegasi.Add(bluePegasus);
         }
 
         for (int i = 19; i < 22; i++)
         {
-            AAttackingPiece bluePegasus = new Pegasus(i, 3, -2);
+            AAttackingPiece bluePegasus = new Pegasus(i, 3, -2, _boardModel);
             bluePegasi.Add(bluePegasus);
         }
 
@@ -117,13 +119,13 @@ public class CreatePieces
 
         for (int i = 99; i < 102; i++)
         {
-            AAttackingPiece redBow = new Bow(i, -1, 3);
+            AAttackingPiece redBow = new Bow(i, -1, 3, _boardModel);
             redBows.Add(redBow);
         }
 
         for (int i = 110; i < 113; i++)
         {
-            AAttackingPiece redBow = new Bow(i, -1, 3);
+            AAttackingPiece redBow = new Bow(i, -1, 3, _boardModel);
             redBows.Add(redBow);
         }
 
@@ -140,13 +142,13 @@ public class CreatePieces
 
         for (int i = 103; i < 106; i++)
         {
-            AAttackingPiece redSword = new Sword(i, -2, 1);
+            AAttackingPiece redSword = new Sword(i, -2, 1, _boardModel);
             redSwords.Add(redSword);
         }
 
         for (int i = 114; i < 117; i++)
         {
-            AAttackingPiece redSword = new Sword(i, -2, 1);
+            AAttackingPiece redSword = new Sword(i, -2, 1, _boardModel);
             redSwords.Add(redSword);
         }
 
@@ -163,13 +165,13 @@ public class CreatePieces
 
         for (int i = 107; i < 110; i++)
         {
-            AAttackingPiece redPegasus = new Pegasus(i, -3, 2);
+            AAttackingPiece redPegasus = new Pegasus(i, -3, 2, _boardModel);
             redPegasi.Add(redPegasus);
         }
 
         for (int i = 118; i < 121; i++)
         {
-            AAttackingPiece redPegasus = new Pegasus(i, -3, 2);
+            AAttackingPiece redPegasus = new Pegasus(i, -3, 2, _boardModel);
             redPegasi.Add(redPegasus);
         }
 

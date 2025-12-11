@@ -5,10 +5,13 @@ public class BoardTilesPresenter : MonoBehaviour
 {
     private IBoardModel _boardModel;
     private Dictionary<int, Vector3> _tilePos;
-    private Dictionary<int, ITileModel> _tileList;
+    private Dictionary<int, Vector3> _piecePos;
 
+
+    [Header("Tile Prefab:")]
     [SerializeField] private GameObject _regularTile;
     [SerializeField] private Transform _cam;
+    [SerializeField] private Transform _tileParent;
 
     [Header("Pieces Prefab:")]
     [SerializeField] private GameObject _blueBow;
@@ -17,10 +20,18 @@ public class BoardTilesPresenter : MonoBehaviour
     [SerializeField] private GameObject _redBow;
     [SerializeField] private GameObject _redSword;
     [SerializeField] private GameObject _redPegasus;
+    [SerializeField] private Transform _pieceParent;
+
+    public List<GameObject> _allPieceViews;
+    public List<GameObject> _allTileViews;
 
     void Start()
     {
         _tilePos = new Dictionary<int, Vector3>();
+        _piecePos = new Dictionary<int, Vector3>();
+        _allPieceViews = new List<GameObject>();
+        _allTileViews = new List<GameObject>();
+
         _boardModel = new BoardModelImpl();
         InitializeBoard();
     }
@@ -50,10 +61,10 @@ public class BoardTilesPresenter : MonoBehaviour
                 y--;
             }
             var spawnedTile = Instantiate(_regularTile, new Vector3(j, y),
-            Quaternion.identity);
+            Quaternion.identity, _tileParent);
             spawnedTile.name = $"Tile({j}, {y})";
-            spawnedTile.AddComponent<TilePresenter>().Init(_boardModel.GetAllTiles()
-            .Find(tile => tile.GetID() == x));
+            spawnedTile.AddComponent<TileView>().Init(_boardModel.GetAllEnterableTiles()
+            .Find(t => t.GetID() == x), _boardModel);
             //is x even AND y not even
             // OR
             //is x not even AND y is even
@@ -64,9 +75,12 @@ public class BoardTilesPresenter : MonoBehaviour
             _tilePos[x] = new Vector3(j, y);
             j++;
 
+            _allTileViews.Add(spawnedTile);
+
         }
 
         _cam.transform.position = new Vector3((float)j / 2 - 0.5f, (float)y / 2, -10);
+        _boardModel.SetTileViewList(_allTileViews);
     }
 
     private void InitializePieces()
@@ -127,19 +141,25 @@ public class BoardTilesPresenter : MonoBehaviour
             .Find(tile => tile.GetID() == piece.GetPos());
             tile.Enter(piece);
 
-            InstaniatePiece(piece, prefab);
+
+
+            _allPieceViews.Add(InstaniatePiece(piece, prefab, _pieceParent));
         }
 
+        _boardModel.SetPieceViewList(_allPieceViews);
     }
 
-    private GameObject InstaniatePiece(AAttackingPiece piece, GameObject piecePrefab)
+    private GameObject InstaniatePiece(AAttackingPiece piece, GameObject piecePrefab, Transform parent)
     {
         Vector3 position = _tilePos[piece.GetPos()];
+        position.z = -1;
 
         var spawnedPiece = Instantiate(piecePrefab, position,
-        Quaternion.identity);
-        spawnedPiece.AddComponent<PiecePresenter>().Init(_boardModel.GetAllPieces()
-            .Find(findingPiece => findingPiece.GetPos() == piece.GetPos()));
+        Quaternion.identity, parent);
+        spawnedPiece.AddComponent<PieceView>().Init(piece, _boardModel);
+
+        _piecePos[piece.GetPos()] = position;
+
         return spawnedPiece;
     }
 

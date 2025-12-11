@@ -16,19 +16,19 @@ public class TargetsImpl : ITargets
     private List<int> _targetTypeList = new List<int>();
     private List<AAttackingPiece> _targets = new List<AAttackingPiece>();
 
-    public TargetsImpl(AAttackingPiece piece, int targetType)
+    public TargetsImpl(AAttackingPiece piece, int targetType, IBoardModel IBoardModel)
     {
         _piece = piece;
         _targetType = targetType;
         _targetTypeList.Add(_targetType);
 
-        foreach (IPieceModel model in BoardModelImpl._allPieces)
+        foreach (IPieceModel model in IBoardModel.GetAllPieces())
         {
             if (model is AAttackingPiece attacker && attacker.GetPieceType() == _piece.GetTargetType() && attacker.IsAlive())
             {
                 _targets.Add(attacker);
             }
-            
+
         }
 
         if (_targets.Count == 0)
@@ -69,6 +69,7 @@ public class TargetsImpl : ITargets
                 targetTiles.Add(target.GetPos());
             }
         }
+        Debug.Log("Target tiles for piece at position " + _piece.GetPos() + ": " + string.Join(", ", targetTiles));
         return targetTiles;
     }
 }

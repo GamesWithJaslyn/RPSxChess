@@ -11,10 +11,11 @@ public abstract class ABasicPiece : IPieceModel
     protected bool _isAlive;
     protected bool _firstTimeChanging;
     protected int _changingInto;
+    protected IBoardModel _boardModel;
 
     public static List<IPieceModel> _allPieces = new List<IPieceModel>();
-    
-    public ABasicPiece(int pos, int pieceType)
+
+    public ABasicPiece(int pos, int pieceType, IBoardModel model)
     {
         _pos = pos;
         _pieceType = pieceType;
@@ -22,6 +23,7 @@ public abstract class ABasicPiece : IPieceModel
         _isSelected = false;
         _isAlive = true;
         _firstTimeChanging = true;
+        _boardModel = model;
     }
 
     public abstract List<int> GetMoveTiles();
@@ -60,7 +62,7 @@ public abstract class ABasicPiece : IPieceModel
     public void SetSelected() {
         _isSelected = true;
 
-        foreach (IPieceModel piece in BoardModelImpl._allPieces)
+        foreach (IPieceModel piece in _boardModel.GetAllPieces())
         {
             if (piece != this)
             {
@@ -76,6 +78,7 @@ public abstract class ABasicPiece : IPieceModel
     public void SetPos(int tile)
     {
         _pos = tile;
+       TurnSelectedFalse();
     }
 
     public bool IsSameTeam(string team) {

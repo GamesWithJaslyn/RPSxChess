@@ -1,13 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class CreateTiles : MonoBehaviour
+public class CreateTiles
 {
     private List<ITileModel> _allTiles;
+    private IBoardModel _boardModel;
 
-    public CreateTiles()
+    public CreateTiles(IBoardModel boardModel)
     {
         _allTiles = GetTiles();
+        _boardModel = boardModel;
     }
     
     public List<ITileModel> GetTiles() 

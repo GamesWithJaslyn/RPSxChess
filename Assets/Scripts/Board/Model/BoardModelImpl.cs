@@ -3,13 +3,32 @@ using UnityEngine;
 
 public class BoardModelImpl : IBoardModel
 {
-    public static List<AAttackingPiece> _allPieces;
-    public static List<ITileModel> _allTiles;
+    public List<AAttackingPiece> _allPieces;
+    public List<GameObject> _allPieceViews;
+    public List<GameObject> _allTileViews;
+    public List<ITileModel> _allTiles;
     
     private bool _bluesTurn;
     private AAttackingPiece _selectedPiece;
-    private CreatePieces _createPieces = new CreatePieces();
-    private CreateTiles _createTiles = new CreateTiles();
+    private GameObject _selectedPieceView;
+    private CreatePieces _createPieces;
+    private CreateTiles _createTiles;
+
+    // Static instance, accessible globally
+    private static BoardModelImpl _instance;
+
+    // Public property to access the instance
+    // public static BoardModelImpl Board
+    // {
+    //     get
+    //     {
+    //         if (_instance == null)
+    //         {
+    //             _instance = new BoardModelImpl();
+    //         }
+    //         return _instance;
+    //     }
+    // }
 
     public BoardModelImpl()
     {
@@ -17,23 +36,53 @@ public class BoardModelImpl : IBoardModel
         _allTiles = new List<ITileModel>();
         _bluesTurn = true;
         _selectedPiece = null;
+        _selectedPieceView = null;
+        _createPieces = new CreatePieces(this);
+        _createTiles = new CreateTiles(this);
 
         _allTiles = _createTiles.GetTiles();
         _allPieces = _createPieces.GetPieces();
-        Debug.Log("Pieces count: _allPieces.Count");
+
+        Debug.Log("Pieces count: " + _allPieces.Count);
     }
 
     public AAttackingPiece SelectPiece(int pos)
     {
-        foreach (AAttackingPiece piece in _allPieces)
+        _selectedPiece = null;
+        _selectedPieceView = null;
+
+        foreach (GameObject pieceView in _allPieceViews)
         {
-            piece.SetSelected();
+            AAttackingPiece pieceModel = pieceView.GetComponent<PieceView>().GetModel();
+            if (pieceModel.GetPos() == pos && pieceModel.IsAlive() && 
+                ((_bluesTurn && pieceModel.IsSameTeam("Blue")) || (!_bluesTurn && pieceModel.IsSameTeam("Red"))))
+            {
+                _selectedPiece = pieceModel;
+                _selectedPieceView = pieceView;
+                _selectedPiece.SetSelected();
+                break;
+            }
         }
 
-        _selectedPiece = _allPieces.Find(piece => piece.GetPos() == pos);
+        if (_selectedPiece != null)
+        {
+            List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
+            SetTilesAsValidMoveTiles(validMoveTiles);
+        }
+
         return _selectedPiece;
     }
 
+    public void UnSelectPiece()
+    {
+        UnHighlightAllTiles();
+
+        if(_selectedPiece == null) return;
+
+        _selectedPiece.TurnSelectedFalse();
+        _selectedPiece = null;
+        _selectedPieceView = null;
+    }
     public List<AAttackingPiece> GetAllPieces()
     {
         return _allPieces;
@@ -46,12 +95,12 @@ public class BoardModelImpl : IBoardModel
 
     public List<IEnterAndLeave> GetAllEnterableTiles()
     {
-        List<IEnterAndLeave> list = new List<IEnterAndLeave>();
-        foreach (EnterAndLeaveTile tile in _allTiles)
+        var list = new List<IEnterAndLeave>();
+        foreach (var tile in _allTiles)
         {
-            list.Add(tile);
+            if (tile is IEnterAndLeave enterable)
+                list.Add(enterable);
         }
-
         return list;
     }
 
@@ -65,14 +114,26 @@ public class BoardModelImpl : IBoardModel
         _allPieces.Add(piece);
     }
 
+    public bool TryMovePiece(int toTile)
+    {
+        try
+        {
+            MovePiece(toTile);
+            return true;
+        }
+        catch
+        {
+            UnSelectPiece();
+            return false;
+        }
+    }
+
     public void MovePiece(int toTile)
     {
-        List<int> validMoveTiles = new List<int>();
-        validMoveTiles = _selectedPiece.GetMoveTiles();
+        List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
 
         if(_selectedPiece != null && _selectedPiece.IsAlive())
         {
-            _selectedPiece.SetPos(toTile);
 
             if(_selectedPiece.CanChange())
             {
@@ -80,6 +141,15 @@ public class BoardModelImpl : IBoardModel
             }
             else if(validMoveTiles.Contains(toTile))
             {
+                List<IEnterAndLeave> tileList = GetAllEnterableTiles();
+                IEnterAndLeave oldTile = tileList.Find(t => t.GetID() == _selectedPiece.GetPos());
+                IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
+
+                oldTile.Leave();
+                newTile.Enter(_selectedPiece);
+
+                _selectedPieceView.GetComponent<PieceView>().MoveTo(toTile);
+                UnHighlightAllTiles();
                 SwitchTurn();
             }
             else
@@ -90,6 +160,32 @@ public class BoardModelImpl : IBoardModel
         else
         {
             throw new System.ArgumentException("No (Alive) Piece is selected!");
+        }
+    }
+
+    public void SetTilesAsValidMoveTiles(List<int> validMoveTiles)
+    {
+        UnHighlightAllTiles();
+
+        foreach (GameObject tile in _allTileViews)
+        {
+            TileView tileView = tile.GetComponent<TileView>();
+            IEnterAndLeave tileModel = tileView.GetTileModel();
+            
+            if (validMoveTiles.Contains(tileModel.GetID()))
+            {
+                tileView.HightLight();
+                tileModel.IsValidTile_CanMoveHere(true);
+            }
+        }
+    }
+
+    public void UnHighlightAllTiles()
+    {
+        foreach (GameObject tile in _allTileViews)
+        {
+            tile.GetComponent<TileView>().UnHighlight();
+            tile.GetComponent<TileView>().GetTileModel().IsValidTile_CanMoveHere(false);
         }
     }
 
@@ -111,7 +207,17 @@ public class BoardModelImpl : IBoardModel
             _bluesTurn = !_bluesTurn;
         }
     }
-    
+
+    public void SetPieceViewList(List<GameObject> pieceViews)
+    {
+        _allPieceViews = pieceViews;
+    }
+
+    public void SetTileViewList(List<GameObject> tileViews)
+    {
+        _allTileViews = tileViews;
+    }
+
 
     // void IBoardModel.ResetBoard()
     // {

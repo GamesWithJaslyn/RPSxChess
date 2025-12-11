@@ -34,8 +34,8 @@ public class BoardTests
     [Test]
     public void MovePiece_TooFar_InvalidMove()
     {
-        BoardModelImpl._allPieces.Clear();
-        AAttackingPiece blueBow = new Bow(39, 1, -3);
+        // BoardModelImpl._allPieces.Clear();
+        AAttackingPiece blueBow = new Bow(39, 1, -3, _boardModel);
         _boardModel.AddPiece(blueBow);
         _boardModel.SelectPiece(39);
 
@@ -47,12 +47,12 @@ public class BoardTests
     public void MovePiece_SwitchingTurns_PiecesTakeTurnMoving()
     {
         Assert.AreEqual(true, _boardModel.IsBlueTurn());
-        _boardModel.AddPiece(new Sword(2, 2, -1));
+        _boardModel.AddPiece(new Sword(2, 2, -1, _boardModel));
         _boardModel.SelectPiece(2);
         _boardModel.MovePiece(3);
 
         Assert.AreEqual(false, _boardModel.IsBlueTurn());
-        _boardModel.AddPiece(new Sword(10, -2, 1));
+        _boardModel.AddPiece(new Sword(10, -2, 1, _boardModel));
         _boardModel.SelectPiece(10);
         _boardModel.MovePiece(9);
 
@@ -73,40 +73,42 @@ public class BoardTests
     [Test]
     public void ChangePieceType_FirstTime_ValidChange()
     {
-        BoardModelImpl._allPieces.Clear();
-        _boardModel.AddPiece(new Sword(12, -2, 1));
-        Assert.AreEqual(-2, _boardModel.SelectPiece(12).GetPieceType());
+        _boardModel.AddPiece(new Sword(14, -2, 1, _boardModel));
+        Assert.AreEqual(-2, _boardModel.SelectPiece(14).GetPieceType());
 
-        _boardModel.SelectPiece(12);
-        _boardModel.MovePiece(1);
+        _boardModel.SelectPiece(14);
+        _boardModel.MovePiece(3);
         //_boardModel.SelectPiece(1);
         _boardModel.ChangePieceType(-1);
 
-        Assert.AreEqual(-1, _boardModel.SelectPiece(1).GetPieceType());
+        Assert.AreEqual(-1, _boardModel.SelectPiece(3).GetPieceType());
     }
 
     [Test]
     public void ChangePieceType_MoreThanOnce_InvalidChange()
     {
-        BoardModelImpl._allPieces.Clear();
 
-        _boardModel.AddPiece(new Sword(12, -2, 1));
-        Assert.AreEqual(-2, _boardModel.SelectPiece(12).GetPieceType());
+        _boardModel.AddPiece(new Sword(14, -2, 1, _boardModel));
+        Assert.AreEqual(-2, _boardModel.SelectPiece(14).GetPieceType());
 
-        _boardModel.SelectPiece(12);
-        _boardModel.MovePiece(1);
+        _boardModel.SelectPiece(14);
+        _boardModel.MovePiece(3);
        // _boardModel.SelectPiece(1);
         _boardModel.ChangePieceType(-3);
 
-        Assert.AreEqual(-3, _boardModel.SelectPiece(1).GetPieceType());
+        Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
 
-        _boardModel.SelectPiece(1);
-        _boardModel.MovePiece(0);
-        Assert.AreEqual(-3, _boardModel.SelectPiece(0).GetPieceType());
+        _boardModel.SelectPiece(3);
+        _boardModel.MovePiece(14);
+
+        _boardModel.SelectPiece(14);
+        _boardModel.MovePiece(3);
+
+        Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
 
        Assert.Throws<System.ArgumentException>(() => _boardModel.ChangePieceType(-1));
 
-        Assert.AreEqual(-3, _boardModel.SelectPiece(0).GetPieceType());
+        Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
     }
 
 }
