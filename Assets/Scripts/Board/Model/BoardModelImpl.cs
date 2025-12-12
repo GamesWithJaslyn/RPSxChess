@@ -3,36 +3,20 @@ using UnityEngine;
 
 public class BoardModelImpl : IBoardModel
 {
-    public List<AAttackingPiece> _allPieces;
+    public List<IPieceModel> _allPieces;
     public List<GameObject> _allPieceViews;
     public List<GameObject> _allTileViews;
     public List<ITileModel> _allTiles;
     
     private bool _bluesTurn;
-    private AAttackingPiece _selectedPiece;
+    private IPieceModel _selectedPiece;
     private GameObject _selectedPieceView;
     private CreatePieces _createPieces;
     private CreateTiles _createTiles;
 
-    // Static instance, accessible globally
-    private static BoardModelImpl _instance;
-
-    // Public property to access the instance
-    // public static BoardModelImpl Board
-    // {
-    //     get
-    //     {
-    //         if (_instance == null)
-    //         {
-    //             _instance = new BoardModelImpl();
-    //         }
-    //         return _instance;
-    //     }
-    // }
-
     public BoardModelImpl()
     {
-        _allPieces = new List<AAttackingPiece>();
+        _allPieces = new List<IPieceModel>();
         _allTiles = new List<ITileModel>();
         _bluesTurn = true;
         _selectedPiece = null;
@@ -46,23 +30,31 @@ public class BoardModelImpl : IBoardModel
         Debug.Log("Pieces count: " + _allPieces.Count);
     }
 
-    public AAttackingPiece SelectPiece(int pos)
+    public IPieceModel SelectPiece(int pos)
     {
         _selectedPiece = null;
         _selectedPieceView = null;
 
         foreach (GameObject pieceView in _allPieceViews)
         {
-            AAttackingPiece pieceModel = pieceView.GetComponent<PieceView>().GetModel();
-            if (pieceModel.GetPos() == pos && pieceModel.IsAlive() && 
-                ((_bluesTurn && pieceModel.IsSameTeam("Blue")) || (!_bluesTurn && pieceModel.IsSameTeam("Red"))))
+            IPieceModel pieceModel = pieceView.GetComponent<PieceView>().GetModel();
+            
+            if(pieceModel.IsAlive())
             {
-                _selectedPiece = pieceModel;
-                _selectedPieceView = pieceView;
-                _selectedPiece.SetSelected();
-                break;
+                if (pieceModel.GetPos() == pos && 
+                    ((_bluesTurn && pieceModel.IsSameTeam("Blue")) ||
+                    (!_bluesTurn && pieceModel.IsSameTeam("Red"))))
+                {
+                    _selectedPiece = pieceModel;
+                    _selectedPieceView = pieceView;
+                    break;
+                }
             }
+            
         }
+
+        // _selectedPieceView = LookUp(pos);
+        // _selectedPiece =  _selectedPieceView.GetComponent<PieceView>().GetModel();
 
         if (_selectedPiece != null)
         {
@@ -71,6 +63,37 @@ public class BoardModelImpl : IBoardModel
         }
 
         return _selectedPiece;
+    }
+
+    public GameObject LookUp(int pos, bool ignoreTeam)
+    {
+        foreach (GameObject pieceView in _allPieceViews)
+        {
+            PieceView pv = pieceView.GetComponent<PieceView>();
+            IPieceModel pieceModel = pv.GetModel();
+
+            if (pieceModel.GetPos() == pos && pieceModel.IsAlive())
+            {
+                if (!ignoreTeam)
+                {
+                    // Normal: only return your own team
+                    if ((_bluesTurn && pieceModel.IsSameTeam("Blue")) ||
+                        (!_bluesTurn && pieceModel.IsSameTeam("Red")))
+                    {
+                        pieceModel.SetSelected();
+                        return pieceView;
+                    }
+                }
+                else
+                {
+                    // Capture: return whatever is on that tile
+                    return pieceView;
+                }
+            }
+        }
+
+        return null;
+
     }
 
     public void UnSelectPiece()
@@ -83,7 +106,7 @@ public class BoardModelImpl : IBoardModel
         _selectedPiece = null;
         _selectedPieceView = null;
     }
-    public List<AAttackingPiece> GetAllPieces()
+    public List<IPieceModel> GetAllPieces()
     {
         return _allPieces;
     }
@@ -109,7 +132,7 @@ public class BoardModelImpl : IBoardModel
         return _bluesTurn;
     }
 
-    public void AddPiece(AAttackingPiece piece)
+    public void AddPiece(IPieceModel piece)
     {
         _allPieces.Add(piece);
     }
@@ -135,22 +158,45 @@ public class BoardModelImpl : IBoardModel
         if(_selectedPiece != null && _selectedPiece.IsAlive())
         {
 
-            if(_selectedPiece.CanChange())
-            {
-                return;
-            }
-            else if(validMoveTiles.Contains(toTile))
+            if(validMoveTiles.Contains(toTile))
             {
                 List<IEnterAndLeave> tileList = GetAllEnterableTiles();
                 IEnterAndLeave oldTile = tileList.Find(t => t.GetID() == _selectedPiece.GetPos());
                 IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
+                IPieceModel piece = newTile.GetPiece();
 
-                oldTile.Leave();
-                newTile.Enter(_selectedPiece);
-
-                _selectedPieceView.GetComponent<PieceView>().MoveTo(toTile);
+                bool canMove = newTile.CanEnter(_selectedPiece);
                 UnHighlightAllTiles();
-                SwitchTurn();
+
+                if(canMove)
+                {
+                    if(piece != null)
+                    {
+                        GameObject obj = LookUp(toTile, true);
+                        PieceView view = obj.GetComponent<PieceView>();
+                        _allPieceViews.Remove(obj);
+                        view.SetDead();
+                        newTile.Leave();
+                        
+                        if(view.GetModel().PiecesLeft() == 0)
+                        {
+                            GameState.Win(_selectedPiece.GetPieceType());
+                        }
+                    }
+
+                    if(GameState.StillPlaying())
+                    {
+                        oldTile.Leave();
+                        newTile.Enter(_selectedPiece);
+                        _selectedPieceView.GetComponent<PieceView>().MoveTo(toTile);
+                        if(_selectedPiece.CanChange())
+                        {
+                            Debug.Log("Should be able to change");
+                            return;
+                        }
+                        SwitchTurn();
+                    }
+                }
             }
             else
             {
@@ -173,9 +219,23 @@ public class BoardModelImpl : IBoardModel
             IEnterAndLeave tileModel = tileView.GetTileModel();
             
             if (validMoveTiles.Contains(tileModel.GetID()))
-            {
-                tileView.HightLight();
-                tileModel.IsValidTile_CanMoveHere(true);
+            {   
+                IPieceModel target = tileModel.GetPiece();
+                if(target != null && target.IsAlive())
+                {
+                    if(_selectedPiece is AAttackingPiece attack &&
+                     target.GetPieceType() == attack.GetTargetType())
+                    {
+                        tileView.HightLight();
+                        tileModel.IsValidTile_CanMoveHere(true);
+                    }
+                }
+                else
+                {
+                    tileView.HightLight();
+                    tileModel.IsValidTile_CanMoveHere(true);
+                }
+
             }
         }
     }

@@ -27,6 +27,7 @@ public abstract class ABasicPiece : IPieceModel
     }
 
     public abstract List<int> GetMoveTiles();
+    public abstract int PiecesLeft();
 
 
     public int GetPieceType()
@@ -49,8 +50,8 @@ public abstract class ABasicPiece : IPieceModel
         return _isAlive;
     }
     
-    public void SetDead()
-    {
+    public virtual void SetDead()
+    {   
         _isAlive = false;
     }
 
@@ -60,15 +61,19 @@ public abstract class ABasicPiece : IPieceModel
     }
 
     public void SetSelected() {
-        _isSelected = true;
-
-        foreach (IPieceModel piece in _boardModel.GetAllPieces())
+        if(_isAlive)
         {
-            if (piece != this)
+            _isSelected = true;
+
+            foreach (IPieceModel piece in _boardModel.GetAllPieces())
             {
-                piece.TurnSelectedFalse();
+                if (piece != this)
+                {
+                    piece.TurnSelectedFalse();
+                }
             }
         }
+        
     }
 
     public void TurnSelectedFalse() {

@@ -40,15 +40,13 @@ public class TilePresenter
         // CASE 2: Selecting a piece
         var piece = _boardModel.SelectPiece(_id);
 
-        if (piece != null)
+        if (_piece != null)
         {
             piece.SetSelected();
-            Debug.Log("[TilePresenter] - Selected piece at " + _id);
         }
-        else
+        else if (piece == null)
         {
             _boardModel.UnSelectPiece();
-            Debug.Log("[TilePresenter] - No piece selected at " + _id);
         }
     }
 

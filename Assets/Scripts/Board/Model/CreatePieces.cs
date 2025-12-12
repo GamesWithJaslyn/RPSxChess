@@ -5,12 +5,12 @@ using System.Collections.Generic;
 //Creates the basic three piece types, on both teams.
 public class CreatePieces
 {
-    private List<AAttackingPiece> _allPieces;
+    private List<IPieceModel> _allPieces;
     private IBoardModel _boardModel;
 
     public CreatePieces(IBoardModel model)
     {
-        _allPieces = new List<AAttackingPiece>();
+        _allPieces = new List<IPieceModel>();
         _allPieces.Clear();
         _boardModel = model;
 
@@ -36,7 +36,7 @@ public class CreatePieces
 
     }
 
-    public List<AAttackingPiece> GetPieces()
+    public List<IPieceModel> GetPieces()
     {
         return _allPieces;
     }

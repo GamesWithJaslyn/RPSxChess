@@ -35,13 +35,20 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
 
     public void Enter(IPieceModel piece)
     {
-        if (_piece == null)
+        _piece = piece;
+    }
+
+    public bool CanEnter(IPieceModel piece)
+    {
+        if (_piece == null || piece is AAttackingPiece attack 
+        && _piece.GetPieceType() == attack.GetTargetType()
+        || !_piece.IsAlive())
         {
-            _piece = piece;
+            return true;
         }
         else
         {
-            throw new ArgumentException("Tile is occupied by: " + nameof(_piece));
+            return false;
         }
     }
 

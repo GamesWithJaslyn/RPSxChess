@@ -8,7 +8,7 @@ public interface IBoardModel
     /// </summary>
     /// <param name="pos"> The position being selected</param>
     /// <returns> Returns the Piece that matches the position given.</returns>
-    AAttackingPiece SelectPiece(int pos);
+    IPieceModel SelectPiece(int pos);
 
     void UnSelectPiece();
 
@@ -16,7 +16,7 @@ public interface IBoardModel
     /// Adds a Piece to the Board.
     /// </summary>
     /// <param name="piece"> The piece being added to the board</param>
-    void AddPiece(AAttackingPiece piece);
+    void AddPiece(IPieceModel piece);
 
     public bool TryMovePiece(int toTile);
 
@@ -49,7 +49,7 @@ public interface IBoardModel
     /// Gets all Pieces on the board.
     /// </summary>
     /// <returns></returns>
-    List<AAttackingPiece> GetAllPieces();
+    List<IPieceModel> GetAllPieces();
 
     /// <summary>
     /// Gets all Tiles on the board.

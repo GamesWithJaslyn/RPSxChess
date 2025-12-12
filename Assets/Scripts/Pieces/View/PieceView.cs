@@ -7,22 +7,24 @@ using UnityEngine;
 /// </summary>
 public class PieceView : MonoBehaviour
 {
-    public AAttackingPiece _model { get; private set; }
-    public PiecePresenter _presenter { get; private set; }
+    public IPieceModel _model { get; private set; }
     [SerializeField] private int _pos;
     [SerializeField] private int _type;
     [SerializeField] private int _targetType;
     private IBoardModel _boardModel;
  
     // Assign a model instance to this view
-    public void Init(AAttackingPiece model, IBoardModel boardModel)
+    public void Init(IPieceModel model, IBoardModel boardModel)
     {
         _model = model;
         _boardModel = boardModel;
         _pos = model.GetPos();
         _type = model.GetPieceType();
-        _targetType = model.GetTargetType();
-       // _presenter = new PiecePresenter(this, model, _boardModel);
+        if(model is AAttackingPiece attack)
+        {
+            _targetType = attack.GetTargetType();
+        }
+        
     }
 
     public void MoveTo(int toTile)
@@ -33,25 +35,13 @@ public class PieceView : MonoBehaviour
         transform.position = position;
     }
 
-    // void OnMouseDown()
-    // {
-    //     float depth = Mathf.Abs(Camera.main.transform.position.z - transform.position.z);
-        
-    //     Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(
-    //     new Vector3(Input.mousePosition.x, Input.mousePosition.y, depth));
+    public void SetDead()
+    {
+        _model.SetDead();
+        gameObject.SetActive(false);
+    }
 
-    //     Debug.Log("[Piece View] - Mouse pos: " + mouseWorldPos);
-    //     Debug.Log("[Piece View] - Piece pos: " + transform.position);
-
-    //     if (mouseWorldPos == transform.position)
-    //     {
-    //         Debug.Log("[Piece View] - Clicked on a Piece");
-    //         _presenter.ClickedOn(mouseWorldPos);
-    //         MoveTo(mouseWorldPos);
-    //     }
-    // }
-
-    public AAttackingPiece GetModel()
+    public IPieceModel GetModel()
     {
         return _model;
     }

@@ -86,4 +86,10 @@ public interface IPieceModel
     /// <summary>
     bool CanChange();
 
+    /// <summary>
+    /// Returns how many pieces of a type is left.
+    /// </summary>
+    /// <returns> The int representing how many pieces, of that type that died, is left.</returns>
+    public int PiecesLeft();
+
 }

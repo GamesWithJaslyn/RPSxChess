@@ -17,8 +17,19 @@ using UnityEngine.TestTools;
 /// </summary>
 public class Bow : AAttackingPiece
 {
+    private static int numOfBluePieces;
+    private static int numOfRedPieces;
     public Bow(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, targetType, model)
     {
+        if(this.GetPieceType() > 0)
+        {
+            numOfBluePieces++;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            numOfRedPieces++;
+        }
+
         if (targetType != -3 && targetType != 3)
         {
             throw new ArgumentException("Bow's can only attack Pegasi!", nameof(targetType));
@@ -46,4 +57,33 @@ public class Bow : AAttackingPiece
 
         return possibleMoves;
     }
+
+    public override int PiecesLeft()
+    {
+         if(this.GetPieceType() > 0)
+        {
+            return numOfBluePieces;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            return numOfRedPieces;
+        }
+        else
+        {
+            return -1000;
+        }
+    }
+
+        public override void SetDead()
+    {
+        if(this.GetPieceType() > 0)
+        {
+            numOfBluePieces--;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            numOfRedPieces--;
+        }
+    }
+
 }

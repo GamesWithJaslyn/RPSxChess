@@ -23,8 +23,20 @@ using UnityEngine;
 /// </summary>
 public class Pegasus : AAttackingPiece
 {
+    private static int numOfBluePieces;
+    private static int numOfRedPieces;
     public Pegasus(int pos, int pieceType, int targetType, IBoardModel model) : base(pos, pieceType, targetType, model)
     {
+        if(this.GetPieceType() > 0)
+        {
+            numOfBluePieces++;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            numOfRedPieces++;
+        }
+
+
         if (targetType != -2 && targetType != 2)
         {
             UnityEngine.Debug.Log("Pegasus target type " + targetType);
@@ -71,5 +83,33 @@ public class Pegasus : AAttackingPiece
         possibleMoves.Add(rightRight);
 
         return possibleMoves;
+    }
+
+    public override int PiecesLeft()
+    {
+         if(this.GetPieceType() > 0)
+        {
+            return numOfBluePieces;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            return numOfRedPieces;
+        }
+        else
+        {
+            return -1000;
+        }
+    }
+
+    public override void SetDead()
+    {
+        if(this.GetPieceType() > 0)
+        {
+            numOfBluePieces--;
+        }
+        else if(this.GetPieceType() < 0)
+        {
+            numOfRedPieces--;
+        }
     }
 }

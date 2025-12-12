@@ -16,6 +16,13 @@ public interface IEnterAndLeave : ITileModel
   void Enter(IPieceModel pieceType);
 
   /// <summary>
+  /// Returns true if the given piece can move onto this ITile.
+  /// </summary>
+  /// <param name="pieceType"> the incoming piece</param>
+  /// <returns> a bool </returns>
+  bool CanEnter(IPieceModel pieceType);
+
+  /// <summary>
   /// Removes the IPiece on this ITile.
   /// </summary>
   void Leave();
