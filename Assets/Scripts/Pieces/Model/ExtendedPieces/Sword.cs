@@ -95,5 +95,7 @@ public class Sword : AAttackingPiece
         {
             numOfRedPieces--;
         }
+
+        base.SetDead();
     }
 }

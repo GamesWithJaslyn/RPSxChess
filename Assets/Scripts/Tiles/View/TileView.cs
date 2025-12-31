@@ -9,9 +9,9 @@ public class TileView : MonoBehaviour
 {
     [Header("Tile Properties")]
     public IEnterAndLeave _model { get; private set; }
-    public TilePresenter _presenter { get; private set; }
     [SerializeField] private int _id;
     [SerializeField] private int _type;
+    [SerializeField] private IPieceModel _piece;
     
     [Header("Tile Colors")]
     [SerializeField] Color32 _baseColor = new Color32(152, 87, 95, 255);
@@ -29,7 +29,7 @@ public class TileView : MonoBehaviour
         _boardModel = boardModel;
         _id = model.GetID();
         _type = model.GetTileType();
-        _presenter = new TilePresenter(this, model, _boardModel);
+        _piece = null;
 
         var isOffset = _id % 2 == 1;
         SpriteRenderer ren = this.GetComponent<SpriteRenderer>();
@@ -39,8 +39,54 @@ public class TileView : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log("[Tile View] - Clicked on a Tile");
-        _presenter.ClickedOn();
+        if(GameState.State().Equals(GamePhase.PLAYING))
+        {
+            Debug.Log("[Tile View] - OnMouseDown()");
+            HandleClick();
+        }
+        else
+        {
+            Debug.Log("[Tile View] - Can't interact with tiles right now.");
+        }
+
+    }
+
+    private void HandleClick()
+    {
+        Debug.Log("[Tile View] - Handle Click() -> Clicked on a tile: " + _id);
+        // CASE 1: Trying to move
+        if (_boardModel.TryMovePiece(_id)) return;
+
+        // CASE 2: Selecting a piece
+        var selectedPiece = _boardModel.GetSelectedPiece();
+
+        if(selectedPiece != null)
+        {
+            if(_piece != null && selectedPiece.IsSameTeam(_piece.GetPieceType()))
+            {
+                _boardModel.UnSelectPiece();
+                _boardModel.SelectPiece(_id);
+            }
+            else
+            {
+                _boardModel.UnSelectPiece();
+            }
+            
+        }
+        else
+        {
+            _boardModel.UnSelectPiece();
+            _boardModel.SelectPiece(_id);
+        }
+
+        // if (_piece != null) //piece on this tile should get selected
+        // {
+        //     selectedPiece.SetSelected();
+        // }
+        // else if (selectedPiece == null) //no piece on this tile, should deselect any selected piece
+        // {
+        //     _boardModel.UnSelectPiece();
+        // }
     }
 
     /// <summary>

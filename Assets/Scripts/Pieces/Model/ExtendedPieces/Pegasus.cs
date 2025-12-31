@@ -111,5 +111,7 @@ public class Pegasus : AAttackingPiece
         {
             numOfRedPieces--;
         }
+
+        base.SetDead();
     }
 }

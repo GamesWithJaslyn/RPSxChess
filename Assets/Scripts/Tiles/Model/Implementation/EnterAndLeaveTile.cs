@@ -58,10 +58,6 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
         {
             _piece = null;
         }
-        else
-        {
-            throw new InvalidOperationException("Tile is already empty!");
-        }
     }
     
       public bool IsOccupied()

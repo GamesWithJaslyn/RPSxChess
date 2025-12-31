@@ -12,7 +12,10 @@ public abstract class ABasicPiece : IPieceModel
     protected bool _firstTimeChanging;
     protected int _changingInto;
     protected IBoardModel _boardModel;
-
+    public event Action<int> OnMoved;
+    public event Action OnDeath;
+    public event Action OnNoPiecesLeft;
+    public event Action<int> OnChangeInto;
     public static List<IPieceModel> _allPieces = new List<IPieceModel>();
 
     public ABasicPiece(int pos, int pieceType, IBoardModel model)
@@ -53,6 +56,7 @@ public abstract class ABasicPiece : IPieceModel
     public virtual void SetDead()
     {   
         _isAlive = false;
+        Debug.Log("[ABasicPiece] - SetDead() called. Piece is now dead. Pieces Left : " + PiecesLeft());
     }
 
     public bool IsSelected()
@@ -63,15 +67,12 @@ public abstract class ABasicPiece : IPieceModel
     public void SetSelected() {
         if(_isAlive)
         {
-            _isSelected = true;
-
             foreach (IPieceModel piece in _boardModel.GetAllPieces())
             {
-                if (piece != this)
-                {
-                    piece.TurnSelectedFalse();
-                }
+                piece.TurnSelectedFalse();
             }
+
+            _isSelected = true;
         }
         
     }
@@ -83,7 +84,10 @@ public abstract class ABasicPiece : IPieceModel
     public void SetPos(int tile)
     {
         _pos = tile;
+        OnMoved?.Invoke(tile);
        TurnSelectedFalse();
+
+       Debug.Log("[ABasicPiece] - Moved to position: " + tile);
     }
 
     public bool IsSameTeam(string team) {
@@ -100,7 +104,25 @@ public abstract class ABasicPiece : IPieceModel
                 return false;
             }
         } else {
-            throw new ArgumentException("Invalid Team", nameof(team));
+            return false;
+        }
+    }
+
+    public bool IsSameTeam(int type) {
+        if (type > 0) {
+            if (_pieceType > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (type < 0) {
+            if (_pieceType < 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -112,15 +134,27 @@ public abstract class ABasicPiece : IPieceModel
             {
                 SetPieceType(changingInto);
                 _firstTimeChanging = false;
+                Debug.Log("[ABasicPiece] - Set dead for changing into new piece. Pieces Left Before Change : " + PiecesLeft());
+                OnChangeInto?.Invoke(changingInto);
+                SetDead();
+                Debug.Log("[ABasicPiece] - Changed into type: " + changingInto);
+
+                if (PiecesLeft() <= 0) 
+                {
+                    GameState.OnGameWon?.Invoke(_pieceType > 0 ? 1 : -1);
+                }
+
             }
             else 
             {
-                throw new System.ArgumentException("Change has to be from the same team!");
+                Debug.Log("[ABasicPiece] - Change has to be from the same team!");
+                return;
             }
         } 
         else 
         {
-            throw new System.ArgumentException("Cannot change piece type at this time.");
+            Debug.Log("[ABasicPiece] - Cannot change piece type at this time.");
+            return;
         }
     }
 
@@ -131,16 +165,71 @@ public abstract class ABasicPiece : IPieceModel
         if (_pieceType < 0 && _pos >= 0 && _pos < 11)
         {
             location = true;
+            Debug.Log("[ABasicPiece] - red piece, " + _pieceType + " can change!");
         } 
         else if (_pieceType > 0 && _pos >= 109 && _pos < 121)
         {
             location = true;
+            Debug.Log("[ABasicPiece] - blue piece, " + _pieceType + " can change!");
         } 
         else 
         {
             location = false;
+            Debug.Log("[ABasicPiece] - Location is not valid for changing: " + location);
         }
+
+        
+
         return _firstTimeChanging && location;
+    }
+
+    public void PromotionMade()
+    {
+        _firstTimeChanging = false;
+    }
+
+    public bool MoveTo(int newPos, IPieceModel piece)
+    {
+        if(this._isAlive && GetMoveTiles().Contains(newPos))
+        {
+            if(piece != null && piece.IsAlive())
+            {
+                AAttackingPiece target = piece as AAttackingPiece;
+                AAttackingPiece thisAttacker = this as AAttackingPiece;
+
+                if(target.GetPieceType() == thisAttacker.GetTargetType()) {
+                   target.SetDead();
+                   target.OnDeath?.Invoke();
+                   if(target.PiecesLeft() <= 0) 
+                   {
+                       GameState.OnGameWon?.Invoke(thisAttacker.GetPieceType() > 0 ? 1 : -1);
+                   }
+                   SetPos(newPos);
+                   return true;
+                }
+                else 
+                {
+                    Debug.Log("[ABasicPiece] - MoveTo() -> Cannot attack this piece.");
+                    return false;
+                }
+            }
+            else
+            {
+                SetPos(newPos);
+                return true;
+            }
+            
+        }
+        else
+        {
+            Debug.Log("[ABasicPiece] - MoveTo() -> Invalid Move");
+            return false;
+        }
+    }
+
+    public IBoardModel GetBoardModel()
+    {
+        return _boardModel;
     }
 
 

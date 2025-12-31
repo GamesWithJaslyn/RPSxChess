@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public interface IBoardModel
     /// <returns> Returns the Piece that matches the position given.</returns>
     IPieceModel SelectPiece(int pos);
 
+    IPieceModel GetSelectedPiece();
     void UnSelectPiece();
 
     /// <summary>
@@ -18,13 +20,15 @@ public interface IBoardModel
     /// <param name="piece"> The piece being added to the board</param>
     void AddPiece(IPieceModel piece);
 
+    void RemovePiece(IPieceModel piece);
+
     public bool TryMovePiece(int toTile);
 
     /// <summary>
     /// Moves the Selected Piece 
     /// </summary>
     /// <param name="toTile">The tile that the piece will move to</param>
-    void MovePiece(int toTile);
+    bool MovePiece(int toTile);
 
     /// <summary>
     /// Changes the Piece that reaches the opposite side of its

@@ -45,8 +45,10 @@ public class BoardModelImpl : IBoardModel
                     ((_bluesTurn && pieceModel.IsSameTeam("Blue")) ||
                     (!_bluesTurn && pieceModel.IsSameTeam("Red"))))
                 {
+                    Debug.Log("[BoardModelImpl] - Selecting piece at position: " + pos);
                     _selectedPiece = pieceModel;
                     _selectedPieceView = pieceView;
+                    _selectedPiece.SetSelected();
                     break;
                 }
             }
@@ -65,6 +67,10 @@ public class BoardModelImpl : IBoardModel
         return _selectedPiece;
     }
 
+    public IPieceModel GetSelectedPiece()
+    {
+        return _selectedPiece;
+    }
     public GameObject LookUp(int pos, bool ignoreTeam)
     {
         foreach (GameObject pieceView in _allPieceViews)
@@ -137,75 +143,143 @@ public class BoardModelImpl : IBoardModel
         _allPieces.Add(piece);
     }
 
+    public void RemovePiece(IPieceModel piece)
+    {
+        _allPieces.Remove(piece);
+    }
+
     public bool TryMovePiece(int toTile)
     {
-        try
+        if(MovePiece(toTile))
         {
-            MovePiece(toTile);
             return true;
         }
-        catch
+        else
         {
             UnSelectPiece();
             return false;
         }
     }
 
-    public void MovePiece(int toTile)
-    {
-        List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
 
-        if(_selectedPiece != null && _selectedPiece.IsAlive())
-        {
+    // public void MovePiece(int toTile)
+    // {
+    //     List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
 
-            if(validMoveTiles.Contains(toTile))
-            {
-                List<IEnterAndLeave> tileList = GetAllEnterableTiles();
-                IEnterAndLeave oldTile = tileList.Find(t => t.GetID() == _selectedPiece.GetPos());
-                IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
-                IPieceModel piece = newTile.GetPiece();
+    //     if(_selectedPiece != null && _selectedPiece.IsAlive())
+    //     {
+    //         if(validMoveTiles.Contains(toTile))
+    //         {
+    //             List<IEnterAndLeave> tileList = GetAllEnterableTiles();
+    //             IEnterAndLeave oldTile = tileList.Find(t => t.GetID() == _selectedPiece.GetPos());
+    //             IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
+                
+    //             IPieceModel piece = newTile.GetPiece();
+    //             bool canMove = newTile.CanEnter(_selectedPiece);
+    //             UnHighlightAllTiles();
 
-                bool canMove = newTile.CanEnter(_selectedPiece);
-                UnHighlightAllTiles();
-
-                if(canMove)
-                {
-                    if(piece != null)
-                    {
-                        GameObject obj = LookUp(toTile, true);
-                        PieceView view = obj.GetComponent<PieceView>();
-                        _allPieceViews.Remove(obj);
-                        view.SetDead();
-                        newTile.Leave();
+    //             if(canMove)
+    //             {
+    //                 if(piece != null)
+    //                 {
+    //                     GameObject obj = LookUp(toTile, true);
+    //                     PieceView view = obj.GetComponent<PieceView>();
+    //                     _allPieceViews.Remove(obj);
+    //                     view.SetDead();
+    //                     newTile.Leave();
                         
-                        if(view.GetModel().PiecesLeft() == 0)
-                        {
-                            GameState.Win(_selectedPiece.GetPieceType());
-                        }
-                    }
+    //                     if(view.GetModel().PiecesLeft() == 0)
+    //                     {
+    //                         GameState.Win(_selectedPiece.GetPieceType());
+    //                     }
+    //                 }
 
-                    if(GameState.StillPlaying())
+    //                 if(GameState.StillPlaying())
+    //                 {
+    //                     oldTile.Leave();
+    //                     newTile.Enter(_selectedPiece);
+    //                     _selectedPiece.MoveTo(toTile, piece);
+    //                     if(_selectedPiece.CanChange())
+    //                     {
+    //                         Debug.Log("[BoardModelImpl] - Piece can Change");
+    //                         CoroutineHost.Instance.Starting_ButtonPress();
+    //                         CoroutineHost.Instance.Waiting_ButtonPress();
+    //                     }
+
+    //                     SwitchTurn();
+                        
+    //                 }
+    //             }
+    //         }
+    //         else
+    //         {
+    //             throw new System.ArgumentException("Invalid move");
+    //         }
+    //     } 
+    //     else
+    //     {
+    //         throw new System.ArgumentException("No (Alive) Piece is selected!");
+    //     }
+    // }
+
+
+    public bool MovePiece(int toTile)
+    {
+        if(GameState.StillPlaying())
+        {
+            if(_selectedPiece != null && _selectedPiece.IsAlive())
+            {
+                List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
+                if(validMoveTiles.Contains(toTile)) 
+                {
+                    List<IEnterAndLeave> tileList = GetAllEnterableTiles();
+                    IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
+                    tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Leave(); // leave old tile
+                    bool valid = _selectedPiece.MoveTo(toTile, newTile.GetPiece());
+                    UnHighlightAllTiles();
+
+                    if(valid)
                     {
-                        oldTile.Leave();
-                        newTile.Enter(_selectedPiece);
-                        _selectedPieceView.GetComponent<PieceView>().MoveTo(toTile);
+                        tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Leave(); // leave old tile
+                        if(newTile.GetPiece() != null)
+                        {
+                            GameObject obj = LookUp(toTile, true); // get the piece being captured, if any
+                            _allPieceViews.Remove(LookUp(toTile, true));
+                            newTile.Leave(); // remove piece from tile
+
+                            if(obj.GetComponent<PieceView>().GetModel().PiecesLeft() == 0)
+                            {
+                                GameState.Win(_selectedPiece.GetPieceType());
+                            }
+                        }
+                        
+                        newTile.Enter(_selectedPiece); // current piece entering new tile
                         if(_selectedPiece.CanChange())
                         {
-                            Debug.Log("Should be able to change");
-                            return;
+                            ChangingInto.Instance.ShowChangeOptions(_selectedPieceView);
                         }
+
                         SwitchTurn();
+                        return true;
                     }
+                    else
+                    {
+                        tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Enter(_selectedPiece); 
+                        return false;
+                    }
+
                 }
-            }
+
+                    return false;
+                }
             else
             {
-                throw new System.ArgumentException("Invalid move");
+                return false;
             }
-        } 
+        }
         else
         {
-            throw new System.ArgumentException("No (Alive) Piece is selected!");
+            return false;
         }
     }
 

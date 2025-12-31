@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -13,11 +14,15 @@ using System.Collections.Generic;
 /// </summary>
 public interface IPieceModel
 {
+    IBoardModel GetBoardModel();
+
     /// <summary>
     /// Sets the position of this IPiece on the board.
     /// - int tile: The number of a tile on the board.
     /// </summary>
     void SetPos(int tile);
+
+    void PromotionMade();
 
     /// <summary>
     /// Gets the position of this IPiece.
@@ -76,6 +81,8 @@ public interface IPieceModel
     /// <returns> A Boolean </returns>
     bool IsSameTeam(string team);
 
+    bool IsSameTeam(int pieceType);
+
     /// <summary>
     /// Changes this IPiece's type into the given one.
     /// <summary>
@@ -91,5 +98,23 @@ public interface IPieceModel
     /// </summary>
     /// <returns> The int representing how many pieces, of that type that died, is left.</returns>
     public int PiecesLeft();
+
+    /// <summary>
+    /// Moves this IPiece to the given position.
+    /// </summary>
+    bool MoveTo(int newPos, IPieceModel pieceModel);
+
+    /// <summary>
+    /// Event triggered when the piece moves to a new position.
+    /// The int parameter represents the new position of the piece.
+    /// </summary>
+    public event Action<int> OnMoved;
+
+    /// <summary>
+    /// Event triggered when the piece dies.
+    /// The bool parameter indicates whether the piece is dead.
+    /// </summary>
+    public event Action OnDeath;
+    public event Action<int> OnChangeInto;
 
 }

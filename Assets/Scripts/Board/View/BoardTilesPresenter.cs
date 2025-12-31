@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardTilesPresenter : MonoBehaviour
 {
@@ -22,8 +23,12 @@ public class BoardTilesPresenter : MonoBehaviour
     [SerializeField] private GameObject _redPegasus;
     [SerializeField] private Transform _pieceParent;
 
+    [Header("Buttons for Change")]
+    [SerializeField] private List<Button> _buttons;
+
     public List<GameObject> _allPieceViews;
     public List<GameObject> _allTileViews;
+    private List<Sprite> _sprites;
 
     void Start()
     {
@@ -31,6 +36,18 @@ public class BoardTilesPresenter : MonoBehaviour
         _piecePos = new Dictionary<int, Vector3>();
         _allPieceViews = new List<GameObject>();
         _allTileViews = new List<GameObject>();
+
+        _sprites = new List<Sprite>
+        {
+            _blueBow.GetComponent<SpriteRenderer>().sprite,
+            _blueSword.GetComponent<SpriteRenderer>().sprite,
+            _bluePegasus.GetComponent<SpriteRenderer>().sprite,
+
+            _redBow.GetComponent<SpriteRenderer>().sprite,
+            _redSword.GetComponent<SpriteRenderer>().sprite,
+            _redPegasus.GetComponent<SpriteRenderer>().sprite,
+        };
+
 
         _boardModel = new BoardModelImpl();
         InitializeBoard();
@@ -52,6 +69,7 @@ public class BoardTilesPresenter : MonoBehaviour
 
         int j = 0;
         int y = 0;
+
         //regular tiles
         for (int x = 0; x < _boardModel.GetAllTiles().Count; x++)
         {
@@ -65,18 +83,10 @@ public class BoardTilesPresenter : MonoBehaviour
             spawnedTile.name = $"Tile({j}, {y})";
             spawnedTile.AddComponent<TileView>().Init(_boardModel.GetAllEnterableTiles()
             .Find(t => t.GetID() == x), _boardModel);
-            //is x even AND y not even
-            // OR
-            //is x not even AND y is even
-            //  var isOffset = (x % 2 == 0 && y % 2 != 0 
-            //  || x % 2 != 0 && y % 2 == 0);
-            //  spawnedTile.Init(x, y);
 
             _tilePos[x] = new Vector3(j, y);
             j++;
-
             _allTileViews.Add(spawnedTile);
-
         }
 
         _cam.transform.position = new Vector3((float)j / 2 - 0.5f, (float)y / 2, -10);
@@ -142,7 +152,6 @@ public class BoardTilesPresenter : MonoBehaviour
             tile.Enter(piece);
 
 
-
             _allPieceViews.Add(InstaniatePiece(piece, prefab, _pieceParent));
         }
 
@@ -156,7 +165,7 @@ public class BoardTilesPresenter : MonoBehaviour
 
         var spawnedPiece = Instantiate(piecePrefab, position,
         Quaternion.identity, parent);
-        spawnedPiece.AddComponent<PieceView>().Init(piece, _boardModel);
+        spawnedPiece.AddComponent<PieceView>().Init(piece, _sprites);
 
         _piecePos[piece.GetPos()] = position;
 

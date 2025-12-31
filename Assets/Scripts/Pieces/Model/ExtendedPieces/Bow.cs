@@ -43,7 +43,6 @@ public class Bow : AAttackingPiece
     public override List<int> GetMoveTiles()
      {
         List<int> possibleMoves = new List<int>();
-        Debug.Log("Piece Pos: " + _pos);
 
         int up = _pos - 11;
         int down = _pos + 11;
@@ -60,7 +59,7 @@ public class Bow : AAttackingPiece
 
     public override int PiecesLeft()
     {
-         if(this.GetPieceType() > 0)
+        if(this.GetPieceType() > 0)
         {
             return numOfBluePieces;
         }
@@ -74,16 +73,20 @@ public class Bow : AAttackingPiece
         }
     }
 
-        public override void SetDead()
+    public override void SetDead()
     {
         if(this.GetPieceType() > 0)
         {
             numOfBluePieces--;
+            Debug.Log("[ABasicPiece] - SetDead() called. Piece is now dead. Pieces Left : " + numOfBluePieces);
         }
         else if(this.GetPieceType() < 0)
         {
             numOfRedPieces--;
+            Debug.Log("[ABasicPiece] - SetDead() called. Piece is now dead. Pieces Left : " + numOfRedPieces);
         }
+
+        base.SetDead();
     }
 
 }
