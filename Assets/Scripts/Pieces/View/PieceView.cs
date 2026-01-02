@@ -51,8 +51,6 @@ public class PieceView : MonoBehaviour
         _model = ChangePieceClass(changeInto); //changing the piece class
         _model.GetBoardModel().AddPiece(_model); //adding new piece to board
         UpdatingModel();
-
-        _model.GetBoardModel().GetAllEnterableTiles().Find(t => t.GetID() == _pos).Enter(_model); //updating the tile's piece reference
     }
 
     private void UpdatingModel()

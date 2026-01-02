@@ -105,6 +105,11 @@ public interface IPieceModel
     bool MoveTo(int newPos, IPieceModel pieceModel);
 
     /// <summary>
+    /// Creates a Deep Copy of this piece.
+    /// </summary>
+    IPieceModel CopyPiece();
+
+    /// <summary>
     /// Event triggered when the piece moves to a new position.
     /// The int parameter represents the new position of the piece.
     /// </summary>

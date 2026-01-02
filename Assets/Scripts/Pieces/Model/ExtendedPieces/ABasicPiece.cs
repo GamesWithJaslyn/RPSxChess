@@ -90,7 +90,8 @@ public abstract class ABasicPiece : IPieceModel
        Debug.Log("[ABasicPiece] - Moved to position: " + tile);
     }
 
-    public bool IsSameTeam(string team) {
+    public bool IsSameTeam(string team) 
+    {
         if (team == "Blue") {
             if (_pieceType > 0) {
                 return true;
@@ -232,5 +233,24 @@ public abstract class ABasicPiece : IPieceModel
         return _boardModel;
     }
 
-
+    public IPieceModel CopyPiece()
+    {
+        switch(_pieceType)
+        {
+            case 1:
+                return new Bow(_pos, _pieceType, -3, _boardModel);
+            case -1:
+                return new Bow(_pos, _pieceType, 3, _boardModel);
+            case 2:
+                return new Sword(_pos, _pieceType, -1, _boardModel);
+            case -2:
+                return new Sword(_pos, _pieceType, 1, _boardModel);
+            case 3:
+                return new Pegasus(_pos, _pieceType, -2, _boardModel);
+            case -3:
+                return new Pegasus(_pos, _pieceType, 2, _boardModel);
+            default:
+                return new Bow(_pos, _pieceType, -3, _boardModel);
+        }
+    }
 }

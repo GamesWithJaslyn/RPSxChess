@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 public enum GamePhase
 {
     START,
@@ -16,8 +17,11 @@ public class GameState : MonoBehaviour
     private static GamePhase _currentPhase;
     [SerializeField] private GameObject _blueWinScreen;
     [SerializeField] private GameObject _redWinScreen;
+    [SerializeField] private Button _rematch;
+    [SerializeField] private Button _quit;
 
     public static Action<int> OnGameWon;
+    public static Action OnRematch;
 
     void Awake()
     {
@@ -27,8 +31,11 @@ public class GameState : MonoBehaviour
     void Start()
     {
         _isPlaying = true; //might change o starting later
-        _blueWinScreen.SetActive(false);
-        _redWinScreen.SetActive(false);
+
+        _rematch.onClick.AddListener(() => Rematch());
+
+        HideUI();
+
         _currentPhase = GamePhase.PLAYING;
         OnGameWon += Win;
     }
@@ -53,6 +60,8 @@ public class GameState : MonoBehaviour
         }
 
         _currentPhase = GamePhase.GAMEOVER;
+        Instance._rematch.gameObject.SetActive(true);
+        Instance._quit.gameObject.SetActive(true);
     }
 
     public static bool StillPlaying()
@@ -69,4 +78,21 @@ public class GameState : MonoBehaviour
     {
         _currentPhase = newPhase;
     }
+
+    public static void Rematch()
+    {
+        OnRematch?.Invoke();
+        Instance.HideUI();
+        SetState(GamePhase.PLAYING);
+    }
+
+    private void HideUI()
+    {
+        _blueWinScreen.SetActive(false);
+        _redWinScreen.SetActive(false);
+        _rematch.gameObject.SetActive(false);
+        _quit.gameObject.SetActive(false);
+    }
+
+
 }

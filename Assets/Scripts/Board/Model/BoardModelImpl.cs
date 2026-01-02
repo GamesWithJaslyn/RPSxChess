@@ -28,6 +28,8 @@ public class BoardModelImpl : IBoardModel
         _allPieces = _createPieces.GetPieces();
 
         Debug.Log("Pieces count: " + _allPieces.Count);
+
+        GameState.OnRematch += ResetBoard;
     }
 
     public IPieceModel SelectPiece(int pos)
@@ -162,67 +164,6 @@ public class BoardModelImpl : IBoardModel
     }
 
 
-    // public void MovePiece(int toTile)
-    // {
-    //     List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
-
-    //     if(_selectedPiece != null && _selectedPiece.IsAlive())
-    //     {
-    //         if(validMoveTiles.Contains(toTile))
-    //         {
-    //             List<IEnterAndLeave> tileList = GetAllEnterableTiles();
-    //             IEnterAndLeave oldTile = tileList.Find(t => t.GetID() == _selectedPiece.GetPos());
-    //             IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
-                
-    //             IPieceModel piece = newTile.GetPiece();
-    //             bool canMove = newTile.CanEnter(_selectedPiece);
-    //             UnHighlightAllTiles();
-
-    //             if(canMove)
-    //             {
-    //                 if(piece != null)
-    //                 {
-    //                     GameObject obj = LookUp(toTile, true);
-    //                     PieceView view = obj.GetComponent<PieceView>();
-    //                     _allPieceViews.Remove(obj);
-    //                     view.SetDead();
-    //                     newTile.Leave();
-                        
-    //                     if(view.GetModel().PiecesLeft() == 0)
-    //                     {
-    //                         GameState.Win(_selectedPiece.GetPieceType());
-    //                     }
-    //                 }
-
-    //                 if(GameState.StillPlaying())
-    //                 {
-    //                     oldTile.Leave();
-    //                     newTile.Enter(_selectedPiece);
-    //                     _selectedPiece.MoveTo(toTile, piece);
-    //                     if(_selectedPiece.CanChange())
-    //                     {
-    //                         Debug.Log("[BoardModelImpl] - Piece can Change");
-    //                         CoroutineHost.Instance.Starting_ButtonPress();
-    //                         CoroutineHost.Instance.Waiting_ButtonPress();
-    //                     }
-
-    //                     SwitchTurn();
-                        
-    //                 }
-    //             }
-    //         }
-    //         else
-    //         {
-    //             throw new System.ArgumentException("Invalid move");
-    //         }
-    //     } 
-    //     else
-    //     {
-    //         throw new System.ArgumentException("No (Alive) Piece is selected!");
-    //     }
-    // }
-
-
     public bool MovePiece(int toTile)
     {
         if(GameState.StillPlaying())
@@ -345,6 +286,12 @@ public class BoardModelImpl : IBoardModel
     public void SetPieceViewList(List<GameObject> pieceViews)
     {
         _allPieceViews = pieceViews;
+        _allPieces.Clear(); //clearing original IPieces and repopulating with their copies
+
+        foreach(PieceView view in pieceViews.ConvertAll( p => p.GetComponent<PieceView>()))
+        {
+            _allPieces.Add(view.GetModel());
+        }
     }
 
     public void SetTileViewList(List<GameObject> tileViews)
@@ -353,8 +300,55 @@ public class BoardModelImpl : IBoardModel
     }
 
 
-    // void IBoardModel.ResetBoard()
-    // {
-    //     throw new System.NotImplementedException();
-    // }
+    /// <summary>
+    /// Resets the board to its initial state.
+    /// </summary>
+    public void ResetBoard()
+    {
+        _allPieces.Clear();
+        AddOriginalPieces();
+        ResetTiles();
+        
+        _bluesTurn = true;
+        _selectedPiece = null;
+        _selectedPieceView = null;
+
+        Debug.Log("Pieces count: " + _allPieces.Count);
+    }
+
+    /// <summary>
+    /// Adds the original pieces back to the board.
+    /// </summary>
+    private void AddOriginalPieces()
+    {
+        // foreach (PieceView pieceview in _allPieceViews.ConvertAll(p => p.GetComponent<PieceView>()))
+        // {
+        //     pieceview.RestoreOriginal();
+        //     _allPieces.Add(pieceview.GetModel());
+        // }
+    }
+
+    /// <summary>
+    /// Resets the tiles on the board to their original state.
+    /// </summary>
+    private void ResetTiles()
+    {
+        foreach (TileView tileview in _allTileViews.ConvertAll(t => t.GetComponent<TileView>()))
+        {
+            tileview.GetTileModel().Leave();
+        }
+
+        foreach (IEnterAndLeave tile in GetAllEnterableTiles())
+        {
+            foreach (IPieceModel piece in _allPieces)
+            {
+                if (piece.GetPos() == tile.GetID())
+                {
+                    tile.Enter(piece);
+                }
+            }
+        }
+    }
+
+
 }

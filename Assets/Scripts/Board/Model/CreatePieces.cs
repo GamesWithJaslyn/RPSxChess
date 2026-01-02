@@ -15,25 +15,11 @@ public class CreatePieces
         _boardModel = model;
 
         _allPieces.AddRange(CreateBlueBows());
-        Debug.Log("------------------------");
-
         _allPieces.AddRange(CreateRedBows());
-        Debug.Log("------------------------");
-
         _allPieces.AddRange(CreateBlueSwords());
-        Debug.Log("------------------------");
-
         _allPieces.AddRange(CreateRedSwords());
-        Debug.Log("------------------------");
-
         _allPieces.AddRange(CreateBluePegasus());
-        Debug.Log("------------------------");
-
         _allPieces.AddRange(CreateRedPegasus());
-        Debug.Log("------------------------");
-
-        Debug.Log($"[CreatePieces] Total pieces created: {_allPieces.Count}");
-
     }
 
     public List<IPieceModel> GetPieces()

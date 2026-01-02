@@ -83,5 +83,5 @@ public interface IBoardModel
     /// <summary>
     /// Resets the board to its initial state.
     /// </summary>
-    ///void ResetBoard();
+    void ResetBoard();
 }
