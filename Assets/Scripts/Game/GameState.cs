@@ -20,7 +20,7 @@ public class GameState : MonoBehaviour
     [SerializeField] private Button _rematch;
     [SerializeField] private Button _quit;
 
-    public static Action<int> OnGameWon;
+    public static Action<Team> OnGameWon;
     public static Action OnRematch;
 
     void Awake()
@@ -40,9 +40,9 @@ public class GameState : MonoBehaviour
         OnGameWon += Win;
     }
 
-    public static void Win(int team)
+    public static void Win(Team team)
     {
-        if (team > 0)
+        if (team.Equals(Team.Blue))
         {
             Debug.Log("Blue Won!");
             Instance._isPlaying = false;
@@ -50,8 +50,7 @@ public class GameState : MonoBehaviour
             Instance._redWinScreen.SetActive(false);
 
         }
-
-        else if (team < 0)
+        else
         {
             Debug.Log("Red Won!");
             Instance._isPlaying = false;

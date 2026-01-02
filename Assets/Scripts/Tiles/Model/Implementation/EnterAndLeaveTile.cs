@@ -3,12 +3,12 @@ using UnityEngine;
 
 public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
 {
-    protected IPieceModel _piece;
+    protected IPieceModel_V2 _piece;
     protected bool _occupied;
     public bool _isValidMoveTileForAPiece;
 
 
-    public EnterAndLeaveTile(int id, int type, IPieceModel piece) : base(id, type)
+    public EnterAndLeaveTile(int id, int type, IPieceModel_V2 piece) : base(id, type)
     {
         _id = id;
         _type = type;
@@ -28,19 +28,19 @@ public abstract class EnterAndLeaveTile : ATile, IEnterAndLeave
     } 
 
 
-    public IPieceModel GetPiece()
+    public IPieceModel_V2 GetPiece()
     {
         return _piece;
     }
 
-    public void Enter(IPieceModel piece)
+    public void Enter(IPieceModel_V2 piece)
     {
         _piece = piece;
     }
 
-    public bool CanEnter(IPieceModel piece)
+    public bool CanEnter(IPieceModel_V2 piece)
     {
-        if (_piece == null || piece is AAttackingPiece attack 
+        if (_piece == null || piece is AAttackingPiece_V2 attack 
         && _piece.GetPieceType() == attack.GetTargetType()
         || !_piece.IsAlive())
         {

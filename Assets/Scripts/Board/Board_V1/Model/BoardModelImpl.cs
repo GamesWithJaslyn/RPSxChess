@@ -190,7 +190,7 @@ public class BoardModelImpl : IBoardModel
 
                             if(obj.GetComponent<PieceView>().GetModel().PiecesLeft() == 0)
                             {
-                                GameState.Win(_selectedPiece.GetPieceType());
+                                //GameState.Win(_selectedPiece.GetPieceType());
                             }
                         }
                         

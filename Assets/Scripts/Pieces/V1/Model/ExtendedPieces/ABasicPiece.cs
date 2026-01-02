@@ -142,7 +142,7 @@ public abstract class ABasicPiece : IPieceModel
 
                 if (PiecesLeft() <= 0) 
                 {
-                    GameState.OnGameWon?.Invoke(_pieceType > 0 ? 1 : -1);
+                    //GameState.OnGameWon?.Invoke(_pieceType > 0 ? 1 : -1);
                 }
 
             }
@@ -203,7 +203,7 @@ public abstract class ABasicPiece : IPieceModel
                    target.OnDeath?.Invoke();
                    if(target.PiecesLeft() <= 0) 
                    {
-                       GameState.OnGameWon?.Invoke(thisAttacker.GetPieceType() > 0 ? 1 : -1);
+                       //GameState.OnGameWon?.Invoke(thisAttacker.GetPieceType() > 0 ? 1 : -1);
                    }
                    SetPos(newPos);
                    return true;

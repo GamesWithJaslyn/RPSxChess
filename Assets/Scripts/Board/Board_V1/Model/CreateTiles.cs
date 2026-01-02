@@ -5,11 +5,18 @@ public class CreateTiles
 {
     private List<ITileModel> _allTiles;
     private IBoardModel _boardModel;
+    private IBoardModel_V2 _boardModel2;
 
     public CreateTiles(IBoardModel boardModel)
     {
         _allTiles = GetTiles();
         _boardModel = boardModel;
+    }
+
+        public CreateTiles(IBoardModel_V2 boardModel)
+    {
+        _allTiles = GetTiles();
+        _boardModel2 = boardModel;
     }
     
     public List<ITileModel> GetTiles() 

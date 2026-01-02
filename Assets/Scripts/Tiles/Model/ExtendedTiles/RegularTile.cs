@@ -5,7 +5,7 @@ using System;
 /// </summary>
 public class RegularTile : EnterAndLeaveTile
 {
-    public RegularTile(int id, int type, IPieceModel piece) : base(id, type, piece)
+    public RegularTile(int id, int type, IPieceModel_V2 piece) : base(id, type, piece)
     {
         if (type != 0)
         {

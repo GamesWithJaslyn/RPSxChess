@@ -8,19 +8,19 @@ public interface IEnterAndLeave : ITileModel
   /// <br/>
   /// </summary>
   /// <returns> An IPieceModel representing the piece on this ITile. </returns>
-  IPieceModel GetPiece();
+  IPieceModel_V2 GetPiece();
 
   /// <summary>
   /// Sets the IPiece on this ITile.
   /// </summary>
-  void Enter(IPieceModel pieceType);
+  void Enter(IPieceModel_V2 pieceType);
 
   /// <summary>
   /// Returns true if the given piece can move onto this ITile.
   /// </summary>
   /// <param name="pieceType"> the incoming piece</param>
   /// <returns> a bool </returns>
-  bool CanEnter(IPieceModel pieceType);
+  bool CanEnter(IPieceModel_V2 pieceType);
 
   /// <summary>
   /// Removes the IPiece on this ITile.
