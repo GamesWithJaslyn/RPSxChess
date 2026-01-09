@@ -1,112 +1,67 @@
-// using System;
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEditor;
-// using UnityEngine;
-// using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine;
 
-// /// <summary>
-// /// Represents a Piece in the RPSxChess game.
-// /// This class is responsible for the visual representation of a piece in the game.
-// /// It handles the movement of the piece in the game world.
-// /// </summary>
-// public class PieceView_V2 : MonoBehaviour
-// {
-//     public IPieceModel_V2 _model { get; private set; }
-//     [SerializeField] private int _pos;
-//     [SerializeField] private PieceType _type;
-//     [SerializeField] private int _targetType;
-//     [SerializeField] private List<Sprite> _images;
+/// <summary>
+/// Represents a Piece in the RPSxChess game.
+/// This class is responsible for the visual representation of a piece in the game.
+/// It handles the movement of the piece in the game world.
+/// </summary>
+public class PieceView_V2 : MonoBehaviour
+{
+    public IPieceModel_V2 Model { get; private set; }
+    [SerializeField] private Color _teamColor;
 
-//       public void Init(IPieceModel_V2 model, List<Sprite> images)
-//     {
-//         _model = model;
-//         _images = images;
-//         _pos = model.GetPos();
-//         _type = model.GetPieceType();
-//         _model.OnMoved += UpdatePosition;
-//         _model.OnDeath += SetDead;
-//         _model.OnChangeInto += ChangeType;
+    private Transform _color;
+    private Transform _pieceType;
 
-//         if(model is AAttackingPiece attack)
-//         {
-//             _targetType = attack.GetTargetType();
-//         }
+    public void Init(IPieceModel_V2 model)
+    {
+        _color = gameObject.transform.Find("Color");
+        _pieceType = gameObject.transform.Find("Type");
 
-//     }
+        Model = model;
+        UpdateType();
 
-//     public void UpdatePosition(int pos)
-//     {
-//         Vector3 position = new Vector3(pos % 11, -1 * (pos / 11), -1);
-//         _pos = _model.GetPos();
-//         transform.position = position;
-//     }
+        Model.OnMoved += UpdatePosition;
+        Model.OnDeath += SetDead;
+        Model.OnChangeInto += UpdateType;
 
-//     public void ChangeType(PieceType changeInto)
-//     {
-//         Debug.Log("[Piece View] - Changing Type to: " + changeInto);
-//         ChangeSprite(changeInto);
+        if (Model.Team == Team.Blue)
+        {
+            _color.GetComponent<SpriteRenderer>().color = new Color32(40, 96, 161, 255);
+        }
+        else { _color.GetComponent<SpriteRenderer>().color = new Color32(158, 21, 15, 255); }
 
-//         _model.GetBoardModel().RemovePiece(_model); //removing old piece from board
-//         _model = ChangePieceClass(changeInto); //changing the piece class
-//         _model.GetBoardModel().AddPiece(_model); //adding new piece to board
-//         UpdatingModel();
-//     }
+    }
 
-//     private void UpdatingModel()
-//     {
-//         _model.PromotionMade();
-//         _type = _model.GetPieceType();
-//         _targetType = (_model as AAttackingPiece).GetTargetType();
+    public void UpdatePosition(int pos) { transform.position = new Vector3(pos % 11, -1 * (pos / 11), -1); }
+    public void SetDead() { gameObject.SetActive(false); }
+    private void OnDestroy() { RemoveEvents(); }
 
-//         _model.OnMoved += UpdatePosition;
-//         _model.OnDeath += SetDead;
-//         _model.OnChangeInto += ChangeType;
-//     }
+    public void UpdateType()
+    {
+        Debug.Log("[Piece View] - Changing Type to: " + Model.PieceType);
+        switch (Model.PieceType)
+        {
+            case PieceType.Bow:
+                _pieceType.GetComponent<SpriteRenderer>().sprite =
+                PieceImageDataBase.PieceSprites[0];
+                break;
+            case PieceType.Sword:
+                _pieceType.GetComponent<SpriteRenderer>().sprite =
+                PieceImageDataBase.PieceSprites[1];
+                break;
+            case PieceType.Pegasus:
+                _pieceType.GetComponent<SpriteRenderer>().sprite =
+                PieceImageDataBase.PieceSprites[2];
+                break;
+        }
+    }
 
-//     private void ChangeSprite(PieceType changeInto)
-//     {
-//         // if(_type > 0)
-//         // {
-//         //     gameObject.GetComponent<SpriteRenderer>().sprite = _images[changeInto - 1];
-//         // }
-//         // else if (_type < 0)
-//         // {
-//         //     gameObject.GetComponent<SpriteRenderer>().sprite = _images[(-1 * changeInto) + 2];
-//         // }
-//     }
-
-//     private IPieceModel_V2 ChangePieceClass(int changeInto)
-//     {
-//         RemoveEvents();
-
-//         switch(changeInto)
-//         {
-//             default:
-//                 Debug.Log("[PieceView] - No valid change type found, staying the same.");
-//                 return _model;
-//         }
-//     }
-
-//     public void SetDead()
-//     {
-//         gameObject.SetActive(false);
-//     }
-
-//     public IPieceModel_V2 GetModel()
-//     {
-//         return _model;
-//     }
-
-//     private void OnDestroy()
-//     {
-//         RemoveEvents();
-//     }
-
-//     private void RemoveEvents()
-//     {
-//         _model.OnMoved -= UpdatePosition;
-//         _model.OnDeath -= SetDead;
-//         _model.OnChangeInto -= ChangeType;
-//     }
-// }
+    private void RemoveEvents()
+    {
+        Model.OnMoved -= UpdatePosition;
+        Model.OnDeath -= SetDead;
+        Model.OnChangeInto -= UpdateType;
+    }
+}

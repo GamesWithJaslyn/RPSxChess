@@ -18,7 +18,7 @@ public class CreateTiles_V2
 
         for (int i = 0; i < 121; i++)
         {
-            ITileModel tile = new RegularTile(i, 0, null);
+            TileModel tile = new TileModel(i, TileType.Regular);
             tilesList.Add(tile);
         }
 

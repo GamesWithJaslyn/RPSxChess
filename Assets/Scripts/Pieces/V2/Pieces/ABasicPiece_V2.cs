@@ -5,135 +5,163 @@ using UnityEngine;
 public enum PieceType { None, Bow, Sword, Pegasus }
 public enum Team { Blue, Red }
 
-public abstract class ABasicPiece_V2 : IPieceModel_V2
+public class PieceModelImpl : IPieceModel_V2
 {
-    protected int _pos;
-    protected Team _team;
-    protected PieceType _pieceType;
-    protected IMoveStrategy _moveStrategy;
-    protected IBoardModel_V2 _boardModel;
-    protected bool _isSelected;
-    protected bool _isAlive;
-    protected bool _isPromoted;
+    public int Position { get; private set; }
+    public Team Team { get; }
+    public PieceType PieceType { get; set; }
+
+
+    public bool IsSelected { get; set; }
+    public bool IsAlive { get; private set; }
+    public bool IsPromoted { get; set; }
+
+    private IMoveStrategy _moveStrategy;
+    private IBoardModel_V2 _boardModel;
+    private int _originalPos;
+    private PieceType _originalType;
+
 
     public event Action OnDeath;
     public event Action<int> OnMoved;
-    public event Action<PieceType> OnChangeInto;
+    public event Action OnChangeInto;
 
-    public ABasicPiece_V2(int pos, PieceType pieceType, Team team, IBoardModel_V2 model)
+    public PieceModelImpl(int pos, PieceType pieceType, Team team, IBoardModel_V2 model)
     {
-        _pos = pos;
-        _team = team;
+        Position = pos;
+        Team = team;
         _boardModel = model;
-        _pieceType = pieceType;
-        
-        _isAlive = true;
-        _isSelected = false;
-        _isPromoted = false;
+        PieceType = pieceType;
+
+        _originalPos = Position;
+        _originalType = PieceType;
+
+        IsAlive = true;
+        IsSelected = false;
+        IsPromoted = false;
+
+        SetMoveStrategy();
     }
 
-    public abstract List<int> GetMoveTiles();
-    public abstract int PiecesLeft();
 
+    public List<Move> GetValidMoves() { return _moveStrategy.GetValidMoves(_boardModel, this); }
 
-    public IMoveStrategy GetValidMoveTiles() { return _moveStrategy; }
-    public IBoardModel_V2 GetBoardModel() { return _boardModel; }
-    public PieceType GetPieceType() { return _pieceType; }
-    public Team GetTeam() { return _team; }
-    public int GetPos() { return _pos; }
+    public bool IsSameTeam(Team team) { return Team == team; }
 
-
-    public bool IsSameTeam(Team team) { return _team == team; }
-    public bool IsSelected() { return _isSelected; }
-    public bool IsAlive() { return _isAlive; }
-    public bool IsPromoted() { return _isPromoted; }
     public bool IsItPossibleToChange()
     {
         bool location;
 
-        if(_team.Equals(Team.Blue) && _pos >= 109 && _pos < 121) { location = true; }
-        else if (_team.Equals(Team.Red) && _pos >= 0 && _pos < 11) { location = true; }
+        if (Team.Equals(Team.Blue) && Position >= 109 && Position < 121) { location = true; }
+        else if (Team.Equals(Team.Red) && Position >= 0 && Position < 11) { location = true; }
         else { location = false; }
 
-        return _isPromoted && location;
+        return IsPromoted && location;
     }
 
-
-    public void SetPieceType(PieceType type) { _pieceType = type; }
-    public void SetSelected(bool selection) { _isSelected = selection; }
-    public void SetPromotion(bool promotion) { _isPromoted = promotion; }
-    public virtual void SetDead() { _isAlive = false;
-        Debug.Log("[ABasicPiece] - SetDead() called. Piece is now dead. Pieces Left : " + PiecesLeft());
-    }
     public void SetPos(int tile)
     {
-        _pos = tile;
+        Debug.Log("[ABasicPiece] - SetPos() -> move sucessful");
+        Position = tile;
         OnMoved?.Invoke(tile);
-        SetSelected(false);
+        IsSelected = false;
     }
 
-    public void ChangeInto(PieceType changingInto) 
+    public Move MakeMove(int tile)
     {
-        if (IsItPossibleToChange()) 
+        foreach (Move move in GetValidMoves())
+        {
+            if (move._to == tile)
+            {
+                SetPos(tile);
+                return move;
+            }
+        }
+
+        return new Move();
+    }
+
+    public virtual void SetDead()
+    {
+        IsAlive = false;
+        OnDeath?.Invoke();
+    }
+
+    public void SetPieceType(PieceType type)
+    {
+        PieceType = type;
+
+        if (this is AAttackingPiece_V2 aAttacking)
+        {
+            aAttacking.ChangeTarget(PieceType);
+        }
+
+        OnChangeInto?.Invoke();
+        SetMoveStrategy();
+    }
+
+    private void SetMoveStrategy()
+    {
+        switch (PieceType)
+        {
+            case PieceType.Bow:
+                _moveStrategy = new Bow_Moves();
+                break;
+            case PieceType.Sword:
+                _moveStrategy = new Sword_Moves();
+                break;
+            case PieceType.Pegasus:
+                _moveStrategy = new Pegasus_Moves();
+                break;
+        }
+    }
+
+    public void ChangeInto(PieceType changingInto)
+    {
+        if (IsItPossibleToChange())
         {
             SetPieceType(changingInto);
-            _isPromoted = true;
-            OnChangeInto?.Invoke(changingInto);
+            IsPromoted = true;
 
-            if (PiecesLeft() <= 0) 
+            if (this is AAttackingPiece_V2 attack)
             {
-                GameState.OnGameWon?.Invoke(_pieceType.Equals(Team.Blue) ? Team.Blue : Team.Red);
+                attack.ChangeTarget(changingInto);
             }
+            // if (PiecesLeft() <= 0) 
+            // {
+            //     GameState.OnGameWon?.Invoke(_pieceType.Equals(Team.Blue) ? Team.Blue : Team.Red);
+            // }
 
         }
         else { return; }
     }
 
-    public bool MoveTo(int newPos, IPieceModel_V2 piece)
+    public void Reset()
     {
-        if(this._isAlive && GetMoveTiles().Contains(newPos))
-        {
-            if(piece != null && piece.IsAlive())
-            {
-                if(piece.GetPieceType() == (this as AAttackingPiece_V2).GetTargetType()) 
-                {
-                   piece.SetDead();
-                   (piece as AAttackingPiece_V2).OnDeath?.Invoke();
-                   if(piece.PiecesLeft() <= 0)  { GameState.OnGameWon?.Invoke(_pieceType
-                                                  .Equals(Team.Blue) ? Team.Blue : Team.Red); }
-                   SetPos(newPos);
-                   return true;
-                }
-                else { return false; }
-            }
-            else 
-            {
-                SetPos(newPos);
-                return true;
-            }
-            
-        }
-        else { return false; }
+        SetPos(_originalPos);
+        SetPieceType(_originalType);
+        IsPromoted = false;
+        IsAlive = true;
     }
-    public IPieceModel_V2 CopyPiece()
-    {
-        return null;
-        // switch(_pieceType)
-        // {
-        //     case 1:
-        //         return new Bow(_pos, _pieceType, -3, _boardModel);
-        //     case -1:
-        //         return new Bow(_pos, _pieceType, 3, _boardModel);
-        //     case 2:
-        //         return new Sword(_pos, _pieceType, -1, _boardModel);
-        //     case -2:
-        //         return new Sword(_pos, _pieceType, 1, _boardModel);
-        //     case 3:
-        //         return new Pegasus(_pos, _pieceType, -2, _boardModel);
-        //     case -3:
-        //         return new Pegasus(_pos, _pieceType, 2, _boardModel);
-        //     default:
-        //         return new Bow(_pos, _pieceType, -3, _boardModel);
-        // }
-    }
+
+    // public override bool Equals(object obj)
+    // {
+    //     if (obj is not IPieceModel_V2 piece) return false;
+    //     if (obj is null) return false;
+    //     if (ReferenceEquals(this, obj)) return true;
+
+    //     return //Position == piece.Position
+    //          Team == piece.Team
+    //         && PieceType == piece.PieceType
+    //         //&& IsSelected == piece.IsSelected
+    //         && IsPromoted == piece.IsPromoted
+    //         && IsAlive == piece.IsAlive;
+    // }
+
+    // public override int GetHashCode()
+    // {
+    //     return HashCode.Combine(//Position, 
+    //     Team, PieceType, IsAlive, IsSelected, IsPromoted);
+    // }
+
 }

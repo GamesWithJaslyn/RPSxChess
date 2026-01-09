@@ -1,334 +1,210 @@
-// using System.Collections.Generic;
-// using System.Linq;
-// using Mono.CSharp.Linq;
-// using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using Codice.CM.Common.Merge;
+using Mono.CSharp.Linq;
+using UnityEngine;
 
-// public class BoardModelImpl_V2 : IBoardModel_V2
-// {
-//     public List<IPieceModel_V2> _allPieces;
-//     public List<GameObject> _allPieceViews;
-//     public List<GameObject> _allTileViews;
-//     public List<ITileModel> _allTiles;
-    
-//     private bool _bluesTurn;
-//     private IPieceModel_V2 _selectedPiece;
-//     private GameObject _selectedPieceView;
-//     private CreatePieces_V2 _createPieces;
-//     private CreateTiles _createTiles;
+public class BoardModelImpl_V2 : IBoardModel_V2
+{
+    private List<IPieceModel_V2> _allPieces;
+    private List<ITileModel> _allTiles;
+    private Dictionary<IPieceModel_V2, GameObject> _piecesKey;
+    private bool _bluesTurn;
+    private IPieceModel_V2 _selectedPiece;
+    private GameObject _selectedPieceView;
+    private CreatePieces_V2 _createPieces;
+    private CreateTiles _createTiles;
 
-//     public BoardModelImpl_V2()
-//     {
-//         _allPieces = new List<IPieceModel_V2>();
-//         _allTiles = new List<ITileModel>();
-//         _bluesTurn = true;
-//         _selectedPiece = null;
-//         _selectedPieceView = null;
-//         _createPieces = new CreatePieces_V2(this);
-//         _createTiles = new CreateTiles(this);
+    public BoardModelImpl_V2()
+    {
+        _allPieces = new CreatePieces_V2(this).GetPieces();
+        _allTiles = new CreateTiles(this).GetTiles();
+        _piecesKey = new Dictionary<IPieceModel_V2, GameObject>();
+        _bluesTurn = true;
+        _selectedPiece = null;
+        _selectedPieceView = null;
 
-//         _allTiles = _createTiles.GetTiles();
-//         _allPieces = _createPieces.GetPieces();
+        GameState.OnRematch += ResetBoard;
+    }
 
-//         Debug.Log("Pieces count: " + _allPieces.Count);
+    public IPieceModel_V2 SelectPiece(int pos)
+    {
+        UnselectAllPieces();
+        _selectedPiece = null;
+        _selectedPieceView = null;
 
-//         GameState.OnRematch += ResetBoard;
-//     }
+        foreach (IPieceModel_V2 pieceModel in _allPieces)
+        {
+            if (pieceModel.IsAlive)
+            {
+                if (pieceModel.Position == pos && ((_bluesTurn && pieceModel.IsSameTeam(Team.Blue))
+                || (!_bluesTurn && pieceModel.IsSameTeam(Team.Red))))
+                {
+                    Debug.Log("[BoardModelImpl] - Selecting piece at position: " + pos);
+                    _selectedPiece = pieceModel;
+                    _selectedPieceView = _piecesKey[_selectedPiece];
+                    _selectedPiece.IsSelected = true;
+                    SetTilesAsValidMoveTiles(_selectedPiece.GetValidMoves());
+                    break;
+                }
+            }
 
-//     public IPieceModel_V2 SelectPiece(int pos)
-//     {
-//         _selectedPiece = null;
-//         _selectedPieceView = null;
+        }
 
-//         foreach (GameObject pieceView in _allPieceViews)
-//         {
-//             IPieceModel_V2 pieceModel = pieceView.GetComponent<PieceView_V2>().GetModel();
-            
-//             if(pieceModel.IsAlive())
-//             {
-//                 if (pieceModel.GetPos() == pos && 
-//                     ((_bluesTurn && pieceModel.IsSameTeam(Team.Blue)) ||
-//                     (!_bluesTurn && pieceModel.IsSameTeam(Team.Red))))
-//                 {
-//                     Debug.Log("[BoardModelImpl] - Selecting piece at position: " + pos);
-//                     _selectedPiece = pieceModel;
-//                     _selectedPieceView = pieceView;
-//                     _selectedPiece.SetSelected(true);
-//                     break;
-//                 }
-//             }
-            
-//         }
+        return _selectedPiece;
+    }
+    public void UnSelectPiece()
+    {
+        UnHighlightAllTiles();
+        _selectedPiece = null;
+        _selectedPieceView = null;
+    }
+    private void UnselectAllPieces()
+    {
+        foreach (IPieceModel_V2 piece in _allPieces) { piece.IsSelected = false; }
+    }
 
-//         // _selectedPieceView = LookUp(pos);
-//         // _selectedPiece =  _selectedPieceView.GetComponent<PieceView>().GetModel();
-
-//         if (_selectedPiece != null)
-//         {
-//             List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
-//             SetTilesAsValidMoveTiles(validMoveTiles);
-//         }
-
-//         return _selectedPiece;
-//     }
-
-//     public IPieceModel_V2 GetSelectedPiece() { return _selectedPiece; }
-//     public GameObject LookUp(int pos, bool ignoreTeam)
-//     {
-//         foreach (GameObject pieceView in _allPieceViews)
-//         {
-//             PieceView pv = pieceView.GetComponent<PieceView>();
-//             IPieceModel pieceModel = pv.GetModel();
-
-//             if (pieceModel.GetPos() == pos && pieceModel.IsAlive())
-//             {
-//                 if (!ignoreTeam)
-//                 {
-//                     // Normal: only return your own team
-//                     if ((_bluesTurn && pieceModel.IsSameTeam("Blue")) ||
-//                         (!_bluesTurn && pieceModel.IsSameTeam("Red")))
-//                     {
-//                         pieceModel.SetSelected();
-//                         return pieceView;
-//                     }
-//                 }
-//                 else
-//                 {
-//                     // Capture: return whatever is on that tile
-//                     return pieceView;
-//                 }
-//             }
-//         }
-
-//         return null;
-
-//     }
-
-//     public void UnSelectPiece()
-//     {
-//         UnHighlightAllTiles();
-
-//         if(_selectedPiece == null) return;
-
-//         _selectedPiece.SetSelected(false);
-//         _selectedPiece = null;
-//         _selectedPieceView = null;
-//     }
-//     public List<IPieceModel_V2> GetAllPieces() { return _allPieces; }
-
-//     public List<ITileModel> GetAllTiles()
-//     {
-//         return _allTiles;
-//     }
-
-//     public List<IEnterAndLeave> GetAllEnterableTiles()
-//     {
-//         var list = new List<IEnterAndLeave>();
-//         foreach (var tile in _allTiles)
-//         {
-//             if (tile is IEnterAndLeave enterable)
-//                 list.Add(enterable);
-//         }
-//         return list;
-//     }
-
-//     public bool IsInside(int tileID) { return _allTiles.All(t => t.GetID() == tileID); }
-//     public bool IsBlueTurn() { return _bluesTurn; }
-//     public void AddPiece(IPieceModel_V2 piece) { _allPieces.Add(piece); }
-//     public void RemovePiece(IPieceModel_V2 piece) { _allPieces.Remove(piece); }
-
-//     public bool TryMovePiece(int toTile)
-//     {
-//         if(MovePiece(toTile))
-//         {
-//             return true;
-//         }
-//         else
-//         {
-//             UnSelectPiece();
-//             return false;
-//         }
-//     }
+    public void SetPiecesDictionary(Dictionary<IPieceModel_V2, GameObject> pk) { _piecesKey = pk; }
+    public void SetTilesAsValidMoveTiles(List<Move> validMoveTiles)
+    {
+        UnHighlightAllTiles();
+        foreach (Move move in validMoveTiles)
+        {
+            foreach (ITileModel tile in _allTiles)
+            {
+                if (move._to == tile.ID)
+                {
+                    tile.SetValid(true);
+                }
+            }
+        }
+    }
 
 
-//     public bool MovePiece(int toTile)
-//     {
-//         if(GameState.StillPlaying())
-//         {
-//             if(_selectedPiece != null && _selectedPiece.IsAlive())
-//             {
-//                 List<int> validMoveTiles = _selectedPiece.GetMoveTiles();
-//                 if(validMoveTiles.Contains(toTile)) 
-//                 {
-//                     List<IEnterAndLeave> tileList = GetAllEnterableTiles();
-//                     IEnterAndLeave newTile = tileList.Find(t => t.GetID() == toTile);
-//                     tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Leave(); // leave old tile
-//                     bool valid = _selectedPiece.MoveTo(toTile, newTile.GetPiece());
-//                     UnHighlightAllTiles();
+    public IPieceModel_V2 GetSelectedPiece() { return _selectedPiece; }
+    public List<IPieceModel_V2> GetAllPieces() { return _allPieces; }
+    public List<ITileModel> GetAllTiles() { return _allTiles; }
+    public IPieceModel_V2 GetPieceAt(int tileID)
+    {
+        return _allPieces.FirstOrDefault(piece => piece?.Position == tileID);
+    }
+    public ITileModel GetTileAt(int tileID)
+    {
+        return _allTiles.FirstOrDefault(tile => tile?.ID == tileID);
+    }
 
-//                     if(valid)
-//                     {
-//                         tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Leave(); // leave old tile
-//                         if(newTile.GetPiece() != null)
-//                         {
-//                             GameObject obj = LookUp(toTile, true); // get the piece being captured, if any
-//                             _allPieceViews.Remove(LookUp(toTile, true));
-//                             newTile.Leave(); // remove piece from tile
+    public bool IsInside(int tileID) { return _allTiles.Any(t => t.ID == tileID); }
+    public bool IsBlueTurn() { return _bluesTurn; }
+    public void AddPiece(IPieceModel_V2 piece) { _allPieces.Add(piece); }
+    public void RemovePiece(IPieceModel_V2 piece) { _allPieces.Remove(piece); }
 
-//                             if(obj.GetComponent<PieceView>().GetModel().PiecesLeft() == 0)
-//                             {
-//                                 GameState.Win(_selectedPiece.GetPieceType());
-//                             }
-//                         }
-                        
-//                         newTile.Enter(_selectedPiece); // current piece entering new tile
-//                         if(_selectedPiece.CanChange())
-//                         {
-//                             ChangingInto.Instance.ShowChangeOptions(_selectedPieceView);
-//                         }
+    public bool TryMovePiece(int toTile)
+    {
+        if (MovePiece(toTile))
+        {
+            return true;
+        }
+        else
+        {
+            UnSelectPiece();
+            return false;
+        }
+    }
 
-//                         SwitchTurn();
-//                         return true;
-//                     }
-//                     else
-//                     {
-//                         tileList.Find(t => t.GetID() == _selectedPiece.GetPos()).Enter(_selectedPiece); 
-//                         return false;
-//                     }
+    public bool MovePiece(int toTile)
+    {
+        if (_selectedPiece == null) return false;
+        Move moveMade = _selectedPiece.MakeMove(toTile);
+        if (moveMade._to == toTile)
+        {
+            if (moveMade._flags == MoveFlags.Capture)
+            {
+                GetTileAt(toTile).Occupant.SetDead();
+                GetTileAt(toTile).Occupant = null;
+            }
 
-//                 }
+            GetTileAt(moveMade._from).Occupant = null;
+            GetTileAt(toTile).Occupant = _selectedPiece;
 
-//                     return false;
-//                 }
-//             else
-//             {
-//                 return false;
-//             }
-//         }
-//         else
-//         {
-//             return false;
-//         }
-//     }
+            if (moveMade._flags == MoveFlags.Promotion)
+            {
+                ChangingInto.Instance.ShowChangeOptions(_selectedPieceView);
+            }
 
-//     public void SetTilesAsValidMoveTiles(List<int> validMoveTiles)
-//     {
-//         UnHighlightAllTiles();
+            SwitchTurn();
+            return true;
 
-//         foreach (GameObject tile in _allTileViews)
-//         {
-//             TileView tileView = tile.GetComponent<TileView>();
-//             IEnterAndLeave tileModel = tileView.GetTileModel();
-            
-//             if (validMoveTiles.Contains(tileModel.GetID()))
-//             {   
-//                 IPieceModel target = tileModel.GetPiece();
-//                 if(target != null && target.IsAlive())
-//                 {
-//                     if(_selectedPiece is AAttackingPiece attack &&
-//                      target.GetPieceType() == attack.GetTargetType())
-//                     {
-//                         tileView.HightLight();
-//                         tileModel.IsValidTile_CanMoveHere(true);
-//                     }
-//                 }
-//                 else
-//                 {
-//                     tileView.HightLight();
-//                     tileModel.IsValidTile_CanMoveHere(true);
-//                 }
-
-//             }
-//         }
-//     }
-
-//     public void UnHighlightAllTiles()
-//     {
-//         foreach (GameObject tile in _allTileViews)
-//         {
-//             tile.GetComponent<TileView>().UnHighlight();
-//             tile.GetComponent<TileView>().GetTileModel().IsValidTile_CanMoveHere(false);
-//         }
-//     }
-
-//     public void SwitchTurn()
-//     {
-//         if (_selectedPiece == null || !_selectedPiece.IsAlive())
-//         {
-//             throw new System.ArgumentException("No (Alive) Piece is selected!");
-//         }
-//         else
-//         {
-//             _selectedPiece.SetSelected(false);
-//             _selectedPiece = null;
-//             _bluesTurn = !_bluesTurn;
-//         }
-//     }
-
-//     public void SetPieceViewList(List<GameObject> pieceViews)
-//     {
-//         _allPieceViews = pieceViews;
-//         _allPieces.Clear(); //clearing original IPieces and repopulating with their copies
-
-//         foreach(PieceView_V2 view in pieceViews.ConvertAll( p => p.GetComponent<PieceView_V2>()))
-//         {
-//             _allPieces.Add(view.GetModel());
-//         }
-//     }
-
-//     public void SetTileViewList(List<GameObject> tileViews)
-//     {
-//         _allTileViews = tileViews;
-//     }
+        }
+        else { return false; }
+    }
 
 
-//     /// <summary>
-//     /// Resets the board to its initial state.
-//     /// </summary>
-//     public void ResetBoard()
-//     {
-//         _allPieces.Clear();
-//         AddOriginalPieces();
-//         ResetTiles();
-        
-//         _bluesTurn = true;
-//         _selectedPiece = null;
-//         _selectedPieceView = null;
+    // public bool MovePiece(int toTile)
+    // {
+    //     List<Move> validMove = _selectedPiece.GetValidMoves();
+    //     foreach (Move move in validMove)
+    //     {
+    //         if (toTile == move._to)
+    //         {
+    //             if (move._flags == MoveFlags.Capture)
+    //             {
+    //                 GetTileAt(move._to).Occupant.SetDead();
+    //             }
 
-//         Debug.Log("Pieces count: " + _allPieces.Count);
-//     }
+    //             GetTileAt(move._from).Occupant = null;
+    //             _selectedPiece.SetPos(toTile);
+    //             GetTileAt(move._to).Occupant = _selectedPiece;
 
-//     /// <summary>
-//     /// Adds the original pieces back to the board.
-//     /// </summary>
-//     private void AddOriginalPieces()
-//     {
-//         // foreach (PieceView pieceview in _allPieceViews.ConvertAll(p => p.GetComponent<PieceView>()))
-//         // {
-//         //     pieceview.RestoreOriginal();
-//         //     _allPieces.Add(pieceview.GetModel());
-//         // }
-//     }
+    //             if (move._flags == MoveFlags.Promotion)
+    //             {
+    //                 ChangingInto.Instance.ShowChangeOptions(_selectedPieceView);
+    //             }
 
-//     /// <summary>
-//     /// Resets the tiles on the board to their original state.
-//     /// </summary>
-//     private void ResetTiles()
-//     {
-//         foreach (TileView tileview in _allTileViews.ConvertAll(t => t.GetComponent<TileView>()))
-//         {
-//             tileview.GetTileModel().Leave();
-//         }
+    //             SwitchTurn();
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
-//         foreach (IEnterAndLeave tile in GetAllEnterableTiles())
-//         {
-//             foreach (IPieceModel piece in _allPieces)
-//             {
-//                 if (piece.GetPos() == tile.GetID())
-//                 {
-//                     tile.Enter(piece);
-//                 }
-//             }
-//         }
-//     }
 
-// }
+    public void UnHighlightAllTiles()
+    {
+        foreach (ITileModel tile in _allTiles) { tile.SetValid(false); }
+    }
+
+    public void SwitchTurn()
+    {
+        UnSelectPiece();
+        _bluesTurn = !_bluesTurn;
+    }
+
+
+    /// <summary>
+    /// Resets the board to its initial state.
+    /// </summary>
+    public void ResetBoard()
+    {
+        _bluesTurn = true;
+        UnSelectPiece();
+        ResetTiles();
+
+        foreach (IPieceModel_V2 piece in _allPieces)
+        {
+            piece.Reset();
+        }
+    }
+
+
+    /// <summary>
+    /// Resets the tiles on the board to their original state.
+    /// </summary>
+    private void ResetTiles()
+    {
+        foreach (TileModel tile in _allTiles)
+        {
+            tile.Occupant = null;
+            tile.SetValid(false);
+        }
+    }
+}

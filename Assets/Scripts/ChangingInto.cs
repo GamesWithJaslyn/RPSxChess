@@ -7,9 +7,8 @@ public class ChangingInto : MonoBehaviour
 {
     [SerializeField] private GameObject _obj;
     [SerializeField] private List<Button> _buttons;
-    [SerializeField] private List<Sprite> _images;
     private Canvas _canvas;
-    private IPieceModel _model;
+    private IPieceModel_V2 _model;
     private GameObject _currentPiece;
     private static ChangingInto _instance;
 
@@ -47,7 +46,7 @@ public class ChangingInto : MonoBehaviour
         AreButtonsActive(true);
         _currentPiece = model;
 
-        _model = _currentPiece.GetComponent<PieceView>().GetModel();
+        _model = _currentPiece.GetComponent<PieceView_V2>().Model;
 
         GameState.SetState(GamePhase.CHANGINGTYPE);
     }
@@ -55,15 +54,11 @@ public class ChangingInto : MonoBehaviour
     public void BowClicked()
     {
         Debug.Log("[Changing Into] - Bow Clicked");
-        if(_model.GetPieceType() != 1 && _model.GetPieceType() > 0)
+        if (_model.PieceType == PieceType.Bow)
         {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[0];
-            _model.ChangeInto(1);
-        }
-        else if (_model.GetPieceType() != -1 && _model.GetPieceType() < 0)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[3];
-            _model.ChangeInto(-1);
+            _currentPiece.GetComponent<SpriteRenderer>().sprite =
+            PieceImageDataBase.PieceSprites[0];
+            _model.ChangeInto(PieceType.Bow);
         }
 
         ResetButton();
@@ -71,16 +66,12 @@ public class ChangingInto : MonoBehaviour
 
     public void SwordClicked()
     {
-        Debug.Log("[Changing Into] - Sword Clicked");
-        if(_model.GetPieceType() != 2 && _model.GetPieceType() > 0)
+        Debug.Log("[Changing Into] - Bow Clicked");
+        if (_model.PieceType == PieceType.Sword)
         {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[1];
-            _model.ChangeInto(2);
-        }
-        else if (_model.GetPieceType() != -2 && _model.GetPieceType() < 0)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[4];
-            _model.ChangeInto(-2);
+            _currentPiece.GetComponent<SpriteRenderer>().sprite =
+            PieceImageDataBase.PieceSprites[0];
+            _model.ChangeInto(PieceType.Sword);
         }
 
         ResetButton();
@@ -88,16 +79,12 @@ public class ChangingInto : MonoBehaviour
 
     public void PegasusClicked()
     {
-        Debug.Log("[Changing Into] - Pegasus Clicked");
-        if(_model.GetPieceType() != 3 && _model.GetPieceType() > 0)
+        Debug.Log("[Changing Into] - Bow Clicked");
+        if (_model.PieceType == PieceType.Pegasus)
         {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[2];
-            _model.ChangeInto(3);
-        }
-        else if (_model.GetPieceType() != -3 && _model.GetPieceType() < 0)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite = _images[5];
-            _model.ChangeInto(-3);
+            _currentPiece.GetComponent<SpriteRenderer>().sprite =
+            PieceImageDataBase.PieceSprites[0];
+            _model.ChangeInto(PieceType.Pegasus);
         }
 
         ResetButton();
@@ -113,7 +100,7 @@ public class ChangingInto : MonoBehaviour
 
     public void AreButtonsActive(bool value)
     {
-        foreach(Button but in _buttons)
+        foreach (Button but in _buttons)
         {
             but.gameObject.SetActive(value);
         }

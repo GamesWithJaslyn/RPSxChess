@@ -14,7 +14,7 @@ public interface IBoardModel_V2
     /// </summary>
     /// <param name="pos"> The position being selected</param>
     /// <returns> Returns the Piece that matches the position given.</returns>
-    void SelectPiece(int pos);
+    IPieceModel_V2 SelectPiece(int pos);
 
     /// <summary>
     /// Gets the current selected IPieceModel.
@@ -35,12 +35,6 @@ public interface IBoardModel_V2
     List<ITileModel> GetAllTiles();
 
     /// <summary>
-    /// Gets all enterable Tiles on the board.
-    /// </summary>
-    /// <returns> Returns a List containing all enterable tiles on the board. </returns>
-    List<IEnterAndLeave> GetAllEnterableTiles();
-
-    /// <summary>
     /// Gets the Piece on the given tile ID.
     /// If there is no piece, it returns null.
     /// </summary>
@@ -57,15 +51,13 @@ public interface IBoardModel_V2
     ITileModel GetTileAt(int tileID);
 
 
-    void SetPieceViewList(List<GameObject> pieceViews);
-
-    void SetTileViewList(List<GameObject> tileViews);
+    void SetPiecesDictionary(Dictionary<IPieceModel_V2, GameObject> pieceKey);
 
     /// <summary>
     /// Sets the valid move tiles for the selected piece.
     /// </summary>
     /// <param name="validMoveTiles"> A List of integers representing the valid move tiles. </param>
-    void SetTilesAsValidMoveTiles(List<int> validMoveTiles);
+    void SetTilesAsValidMoveTiles(List<Move> validMoveTiles);
 
 
     /// <summary>
@@ -95,14 +87,6 @@ public interface IBoardModel_V2
     /// </summary>
     /// <param name="toTile">The tile that the piece will move to</param>
     bool MovePiece(int toTile);
-
-    /// <summary>
-    /// Changes the Piece that reaches the opposite side of its
-    /// starting position to the given type.
-    /// </summary>
-    /// <param name="type"> The int representing the type that the
-    /// Piece will be changed into.</param>
-    void ChangePieceType(int type);
 
     /// <summary>
     /// Switches the turn to the other player.

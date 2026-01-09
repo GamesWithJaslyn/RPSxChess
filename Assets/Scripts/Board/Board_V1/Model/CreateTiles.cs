@@ -13,19 +13,19 @@ public class CreateTiles
         _boardModel = boardModel;
     }
 
-        public CreateTiles(IBoardModel_V2 boardModel)
+    public CreateTiles(IBoardModel_V2 boardModel)
     {
         _allTiles = GetTiles();
         _boardModel2 = boardModel;
     }
-    
-    public List<ITileModel> GetTiles() 
+
+    public List<ITileModel> GetTiles()
     {
         List<ITileModel> tilesList = new List<ITileModel>();
 
         for (int i = 0; i < 121; i++)
         {
-            ITileModel tile = new RegularTile(i, 0, null);
+            ITileModel tile = new TileModel(i, TileType.Regular);
             tilesList.Add(tile);
         }
 

@@ -31,48 +31,29 @@ public interface IPieceModel_V2
     /// Event triggered when this Piece changes type.
     /// The PieceType parameter indicates the type this Piece will change into.
     /// </summary>
-    public event Action<PieceType> OnChangeInto;
+    public event Action OnChangeInto;
 
-    /// <summary>
-    /// Gets the IBoardModel of this Piece.
-    /// </summary>
-    /// <returns> an IBoardModel </returns>
-    IBoardModel_V2 GetBoardModel();
-
-    /// <summary>
-    /// Gets the position of this IPiece.
-    /// </summary>
-    /// <returns> The int representing the ID of the tile this IPiece is on. </returns>
-    int GetPos();
-
-    /// <summary>
-    /// Gets the type of this IPiece.
-    /// </summary>
-    /// <returns> An int representing the type of this IPiece. </returns>
-    PieceType GetPieceType();
+    Team Team { get; }
+    int Position { get; }
+    PieceType PieceType { get; set; }
 
     /// <summary>
     /// Gets the List of tiles this IPiece can move to.
     /// </summary>
     /// <returns> The IMoveStrategy class </returns>
-    IMoveStrategy GetValidMoveTiles();
-
-    Team GetTeam();
+    List<Move> GetValidMoves();
 
     /// <summary>
-    /// Sets the position of this Piece on the board.
+    /// Sets the position of this Piece on the board only if the given ID is within its valid moves.
+    /// Invokes the OnMove event, and turns this Pieces selected to false.
     /// <paramref name="tile"/> The ID of the tile this Piece will move into.
     /// </summary>
     void SetPos(int tile);
 
-    /// <summary>
-    /// Sets the bool for if this IPiece has been promoted.
-    /// <paramref name="promotion"/> The bool that indicates if this Piece has been promoted or not.
-    /// </summary>
-    void SetPromotion(bool promotion);
-
+    Move MakeMove(int tile);
     /// <summary>
     /// Sets the type of this IPiece.
+    /// Invokes the OnChangeInto event, and updates this Piece's IMoveStrategy.
     /// <paramref name="type"/> The PieceType this piece will change into.
     /// </summary>
     void SetPieceType(PieceType type);
@@ -82,30 +63,10 @@ public interface IPieceModel_V2
     /// </summary>
     void SetDead();
 
-    /// <summary>
-    /// Sets the selected state of this IPiece.
-    /// <paramref name="selection"/> The bool indicating whether this Piece will be selected or unselected.
-    /// </summary>
-    void SetSelected(bool selection);
 
-    /// <summary>
-    /// Returns whether this Piece has been promoted.
-    /// </summary>
-    /// <returns> A bool </returns>
-    bool IsPromoted();
-
-    /// <summary>
-    /// Checks if this IPiece is selected.
-    /// A piece is considered selected if it is currently being interacted with by the player.
-    /// </summary>
-    /// <returns> A boolean indicating whether this IPiece is selected. </returns>
-    bool IsSelected();
-
-    /// <summary>
-    /// Checks if this IPiece is alive.
-    /// A piece is considered alive if it has not been captured or removed from the game.
-    /// </summary>
-    bool IsAlive();
+    bool IsPromoted { get; set; }
+    bool IsSelected { get; set; }
+    bool IsAlive { get; }
 
     /// <summary>
     /// Returns true if this IPiece's team is the same as the given Team type.
@@ -119,18 +80,13 @@ public interface IPieceModel_V2
     bool IsItPossibleToChange();
 
     /// <summary>
-    /// Returns how many pieces of a type is left.
-    /// </summary>
-    /// <returns> The int representing how many pieces, of that type that died, is left.</returns>
-    public int PiecesLeft();
-
-    /// <summary>
     /// Moves this IPiece to the given tile ID.
     /// <paramref name="newPos"/> The ID of a tile.
     /// <paramref name="pieceModel"/> The Piece that is on the given tile. (can be null)
     /// </summary>
     /// <returns> A bool indicating whether this Piece was able to move successfully </returns>
-    bool MoveTo(int newPos, IPieceModel_V2 pieceModel);
+    //bool MoveTo(int newPos, IPieceModel_V2 pieceModel);
+
 
     /// <summary>
     /// Changes this Piece's type into the given type;
@@ -141,6 +97,9 @@ public interface IPieceModel_V2
     /// <summary>
     /// Creates a Deep Copy of this piece.
     /// </summary>
-    IPieceModel_V2 CopyPiece();
+    void Reset();
+
+    // bool Equals(object obj);
+    // int GetHashCode();
 
 }

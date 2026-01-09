@@ -1,13 +1,10 @@
-using System;
-using UnityEngine;
+// using System;
+// using UnityEngine;
 
-public class TeleportTile : EnterAndLeaveTile
-{
-    public TeleportTile(int id, int type, IPieceModel piece) : base(id, type, piece)
-    {
-        if (type != 2)
-        {
-            throw new ArgumentException("Teleport tile type has to be 2!");
-        }
-    }
-}
+// public class TeleportTile : AEnterableTile
+// {
+//     public TeleportTile(int id, TileType type, IPieceModel_V2 piece) : base(id, type, piece)
+//     {
+        
+//     }
+// }
