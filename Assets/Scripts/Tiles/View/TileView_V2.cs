@@ -40,19 +40,13 @@ public class TileView_V2 : MonoBehaviour
     {
         if (GameState.State().Equals(GamePhase.PLAYING))
         {
-            Debug.Log("[Tile View] - OnMouseDown()");
             HandleClick();
-        }
-        else
-        {
-            Debug.Log("[Tile View] - Can't interact with tiles right now.");
         }
 
     }
 
     private void HandleClick()
     {
-        Debug.Log("[Tile View] - Handle Click() -> Clicked on a tile: " + _id);
         // CASE 1: Trying to move
         if (_boardModel.MovePiece(_id)) { return; }
 

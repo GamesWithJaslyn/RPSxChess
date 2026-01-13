@@ -54,38 +54,23 @@ public class ChangingInto : MonoBehaviour
     public void BowClicked()
     {
         Debug.Log("[Changing Into] - Bow Clicked");
-        if (_model.PieceType == PieceType.Bow)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite =
-            PieceImageDataBase.PieceSprites[0];
-            _model.ChangeInto(PieceType.Bow);
-        }
+        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Bow);
 
         ResetButton();
     }
 
     public void SwordClicked()
     {
-        Debug.Log("[Changing Into] - Bow Clicked");
-        if (_model.PieceType == PieceType.Sword)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite =
-            PieceImageDataBase.PieceSprites[0];
-            _model.ChangeInto(PieceType.Sword);
-        }
+        Debug.Log("[Changing Into] - Sword Clicked");
+        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Sword);
 
         ResetButton();
     }
 
     public void PegasusClicked()
     {
-        Debug.Log("[Changing Into] - Bow Clicked");
-        if (_model.PieceType == PieceType.Pegasus)
-        {
-            _currentPiece.GetComponent<SpriteRenderer>().sprite =
-            PieceImageDataBase.PieceSprites[0];
-            _model.ChangeInto(PieceType.Pegasus);
-        }
+        Debug.Log("[Changing Into] - Pegasus Clicked");
+        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Pegasus);
 
         ResetButton();
     }

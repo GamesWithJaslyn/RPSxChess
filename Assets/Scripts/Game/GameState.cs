@@ -44,7 +44,6 @@ public class GameState : MonoBehaviour
     {
         if (team.Equals(Team.Blue))
         {
-            Debug.Log("Blue Won!");
             Instance._isPlaying = false;
             Instance._blueWinScreen.SetActive(true);
             Instance._redWinScreen.SetActive(false);
@@ -52,7 +51,6 @@ public class GameState : MonoBehaviour
         }
         else
         {
-            Debug.Log("Red Won!");
             Instance._isPlaying = false;
             Instance._blueWinScreen.SetActive(false);
             Instance._redWinScreen.SetActive(true);

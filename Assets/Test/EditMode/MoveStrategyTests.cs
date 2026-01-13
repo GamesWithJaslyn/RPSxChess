@@ -33,7 +33,8 @@ public class MoveStrategyTests
     {
         Move move_down = new MoveBuilder(new Move(35, 46)).BuildMove();
         Move move_left = new MoveBuilder(new Move(35, 34)).BuildMove();
-        Move move_right = new MoveBuilder(new Move(35, 36)).AddFlags(MoveFlags.Capture).BuildMove();
+        Move move_right = new MoveBuilder(new Move(35, 36))
+        .AddFlags(new List<MoveFlags> { MoveFlags.Capture }).BuildMove();
 
         List<Move> bowMoves = new List<Move> { move_down, move_left, move_right, };
         List<Move> actual = _boardModel.SelectPiece(35).GetValidMoves();
@@ -50,7 +51,7 @@ public class MoveStrategyTests
         Move move_down = new MoveBuilder(new Move(106, 117))
                         .SetPromotionType(PieceType.None).BuildMove();
         Move move_right = new MoveBuilder(new Move(106, 107))
-                        .AddFlags(MoveFlags.Capture).BuildMove();
+                        .AddFlags(new List<MoveFlags> { MoveFlags.Capture }).BuildMove();
 
         AAttackingPiece_V2 newBow = new AAttackingPiece_V2(106, PieceType.Bow,
              Team.Blue, PieceType.Pegasus, _boardModel);
