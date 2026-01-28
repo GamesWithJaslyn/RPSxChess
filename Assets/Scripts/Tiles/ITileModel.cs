@@ -33,12 +33,16 @@ public interface ITileModel
     /// </summary>
     /// <returns> A TileType representing this ITile. </returns>
     /// 
-    int ID { get; } 
-    TileType Type { get; } 
+    int ID { get; }
+    TileType Type { get; }
     ITileRule Rule { get; }
-    IPieceModel_V2 Occupant { get; set; }   
+    IPieceModel Occupant { get; }
     ITileModel GetTile();
     event Action<bool> OnTileValid;
+    event Action OnChangeType;
+    event Action<IPieceModel> OnPieceEntered;
+
+    public void EnterPiece(IPieceModel piece);
     public void SetValid(bool isvalid);
 
     /// <summary>

@@ -1,16 +1,19 @@
 using System;
 using System.Dynamic;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 public enum TileType { None, Regular, Teleport, Water }
 
-public class TileModel : ITileModel
+public class TileModelImpl : ITileModel
 {
     public int ID { get; }
-    public TileType Type { get; private set; }
+    public TileType Type { get; set; }
     public ITileRule Rule { get; private set; }
-    public IPieceModel_V2 Occupant { get; set; }
+    public IPieceModel Occupant { get; private set; }
     public event Action<bool> OnTileValid;
-    public TileModel(int id, TileType type)
+    public event Action OnChangeType;
+    public event Action<IPieceModel> OnPieceEntered;
+    public TileModelImpl(int id, TileType type)
     {
         ID = id;
         Type = type;
@@ -19,7 +22,22 @@ public class TileModel : ITileModel
     }
 
     public ITileModel GetTile() { return this; }
-    public void ChangeType(TileType type) { Type = type; SetRule(); }
+
+    public void EnterPiece(IPieceModel piece)
+    {
+        if (Type != TileType.Water)
+        {
+            Occupant = piece;
+            OnPieceEntered?.Invoke(piece);
+        }
+
+    }
+    public void ChangeType(TileType type)
+    {
+        Type = type;
+        SetRule();
+        OnChangeType?.Invoke();
+    }
 
     private void SetRule()
     {
@@ -41,7 +59,6 @@ public class TileModel : ITileModel
     {
         OnTileValid?.Invoke(isvalid);
     }
-
 
     /// public ITileRule GetRule() { return _tileRule; }
     /// public int GetID() { return _id; }

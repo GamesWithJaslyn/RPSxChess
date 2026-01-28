@@ -5,15 +5,15 @@ public enum MoveFlags { None, Capture, Promotion }
 
 public struct Move
 {
-    public int _from { get; set; }
-    public int _to { get; set; }
-    public List<MoveFlags> _flags { get; set; }
-    public PieceType _promotionType { get; set; }
+    public int From { get; set; }
+    public int To { get; set; }
+    public List<MoveFlags> Flags { get; set; }
+    public PieceType PromotionType { get; set; }
 
     public Move(int from, int to) : this()
     {
-        _from = from;
-        _to = to;
+        From = from;
+        To = to;
     }
 }
 
@@ -27,13 +27,13 @@ public class MoveBuilder
 
     public MoveBuilder AddFlags(List<MoveFlags> addFlag)
     {
-        _move._flags = addFlag;
+        _move.Flags = addFlag;
         return this;
     }
 
     public MoveBuilder SetPromotionType(PieceType type)
     {
-        _move._promotionType = type;
+        _move.PromotionType = type;
         return this;
     }
 
@@ -48,6 +48,6 @@ public interface IMoveStrategy
     /// <param name="board"> The board the given Piece is on. </param>
     /// <param name="piece"> The Piece that is going to make a move. </param>
     /// <returns> A List of Move </returns>
-    List<Move> GetValidMoves(IBoardModel_V2 board, IPieceModel_V2 piece);
+    List<Move> GetValidMoves(IBoardModel board, IPieceModel piece);
 }
 

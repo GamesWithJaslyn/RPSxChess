@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IBoardModel_V2
+public interface IBoardModel
 {
     /// <summary>
     /// Unselects the previously selected IPiece.
@@ -14,19 +14,19 @@ public interface IBoardModel_V2
     /// </summary>
     /// <param name="pos"> The position being selected</param>
     /// <returns> Returns the Piece that matches the position given.</returns>
-    IPieceModel_V2 SelectPiece(int pos);
+    IPieceModel SelectPiece(int pos);
 
     /// <summary>
     /// Gets the current selected IPieceModel.
     /// </summary>
     /// <returns> An IPieceModel </returns>
-    IPieceModel_V2 GetSelectedPiece();
+    IPieceModel GetSelectedPiece();
 
     /// <summary>
     /// Gets all Pieces on the board.
     /// </summary>
     /// <returns></returns>
-    List<IPieceModel_V2> GetAllPieces();
+    List<IPieceModel> GetAllPieces();
 
     /// <summary>
     /// Gets all Tiles on the board.
@@ -40,7 +40,7 @@ public interface IBoardModel_V2
     /// </summary>
     /// <param name="tileID"> the given Tile being checked. </param>
     /// <returns> IPieceModel or null. </returns>
-    IPieceModel_V2 GetPieceAt(int tileID);
+    IPieceModel GetPieceAt(int tileID);
 
     /// <summary>
     /// Gets the Tile given the tile ID.
@@ -51,7 +51,7 @@ public interface IBoardModel_V2
     ITileModel GetTileAt(int tileID);
 
 
-    void SetPiecesDictionary(Dictionary<IPieceModel_V2, GameObject> pieceKey);
+    void SetPiecesDictionary(Dictionary<IPieceModel, GameObject> pieceKey);
 
     /// <summary>
     /// Sets the valid move tiles for the selected piece.
@@ -64,14 +64,17 @@ public interface IBoardModel_V2
     /// Adds a Piece to the Board.
     /// </summary>
     /// <param name="piece"> The piece being added to the board</param>
-    void AddPiece(IPieceModel_V2 piece);
+    void AddPiece(IPieceModel piece);
 
     /// <summary>
     /// Removes a Piece from this Board. 
     /// If the piece is not on the this Board, it exits the method.
     /// </summary>
     /// <param name="piece"> The piece being removed from this Board </param>
-    void RemovePiece(IPieceModel_V2 piece);
+    void RemovePiece(IPieceModel piece);
+
+    void ShowArrow();
+    void ResetArrow();
 
 
     /// <summary>

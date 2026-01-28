@@ -5,13 +5,13 @@ using UnityEngine.TestTools;
 
 public class BoardTests_V2
 {
-    private IBoardModel_V2 _boardModel;
-    private IPieceModel_V2 _bow;
+    private IBoardModel _boardModel;
+    private IPieceModel _bow;
 
     [SetUp]
     public void Setup()
     {
-        _boardModel = new BoardModelImpl_V2();
+        _boardModel = new BoardModelImpl();
         _bow = new PieceModelImpl(22, PieceType.Bow, Team.Blue, _boardModel);
         _boardModel.AddPiece(_bow);
     }
@@ -51,7 +51,7 @@ public class BoardTests_V2
     [Test]
     public void MovePiece_TooFar_InvalidMove()
     {
-        IPieceModel_V2 blueBow = new PieceModelImpl(39, PieceType.Bow, Team.Blue, _boardModel);
+        IPieceModel blueBow = new PieceModelImpl(39, PieceType.Bow, Team.Blue, _boardModel);
         _boardModel.AddPiece(blueBow);
 
         Assert.AreNotEqual(null, _boardModel.SelectPiece(39));
@@ -63,7 +63,7 @@ public class BoardTests_V2
     [Test]
     public void MovePiece_ValidMove()
     {
-        IPieceModel_V2 blueBow = new PieceModelImpl(39, PieceType.Bow, Team.Blue, _boardModel);
+        IPieceModel blueBow = new PieceModelImpl(39, PieceType.Bow, Team.Blue, _boardModel);
         _boardModel.AddPiece(blueBow);
 
         Assert.AreNotEqual(null, _boardModel.SelectPiece(39));

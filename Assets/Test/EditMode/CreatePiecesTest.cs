@@ -5,13 +5,13 @@ using UnityEngine.TestTools;
 
 public class CreatePiecesTest
 {
-    private CreatePieces_V2 _createPieces;
-    private IBoardModel_V2 _boardModel;
+    private CreatePieces _createPieces;
+    private IBoardModel _boardModel;
     [SetUp]
     public void SetUp()
     {
-        _boardModel = new BoardModelImpl_V2();
-        _createPieces = new CreatePieces_V2(_boardModel);
+        _boardModel = new BoardModelImpl();
+        _createPieces = new CreatePieces(_boardModel);
     }
 
     [Test]

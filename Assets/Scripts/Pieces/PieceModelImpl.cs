@@ -5,7 +5,7 @@ using UnityEngine;
 public enum PieceType { None, Bow, Sword, Pegasus }
 public enum Team { Blue, Red }
 
-public class PieceModelImpl : IPieceModel_V2
+public class PieceModelImpl : IPieceModel
 {
     public int Position { get; private set; }
     public Team Team { get; }
@@ -17,7 +17,7 @@ public class PieceModelImpl : IPieceModel_V2
     public bool IsPromoted { get; set; }
 
     private IMoveStrategy _moveStrategy;
-    private IBoardModel_V2 _boardModel;
+    private IBoardModel _boardModel;
     private int _originalPos;
     private PieceType _originalType;
 
@@ -27,7 +27,7 @@ public class PieceModelImpl : IPieceModel_V2
     public event Action OnChangeInto;
     public event Action OnReset;
 
-    public PieceModelImpl(int pos, PieceType pieceType, Team team, IBoardModel_V2 model)
+    public PieceModelImpl(int pos, PieceType pieceType, Team team, IBoardModel model)
     {
         Position = pos;
         Team = team;
@@ -53,7 +53,7 @@ public class PieceModelImpl : IPieceModel_V2
     {
         bool location;
 
-        if (Team.Equals(Team.Blue) && pos >= 109 && pos < 121)
+        if (Team.Equals(Team.Blue) && pos > 109 && pos < 121)
         {
             location = true;
         }
@@ -80,8 +80,12 @@ public class PieceModelImpl : IPieceModel_V2
     {
         foreach (Move move in GetValidMoves())
         {
-            if (move._to == tile)
+            if (move.To == tile)
             {
+                foreach (MoveFlags flag in move.Flags)
+                {
+                    Debug.Log($"[PieceModelImpl] - Checking flags: {flag} for move to {move.To}");
+                }
                 SetPos(tile);
                 return move;
             }
@@ -101,7 +105,7 @@ public class PieceModelImpl : IPieceModel_V2
     {
         PieceType = type;
 
-        if (this is AAttackingPiece_V2 aAttacking)
+        if (this is AAttackingPiece aAttacking)
         {
             aAttacking.ChangeTarget(PieceType);
         }
@@ -141,5 +145,6 @@ public class PieceModelImpl : IPieceModel_V2
         IsPromoted = false;
         IsAlive = true;
         OnReset?.Invoke();
+        Debug.Log($"Reseting {Team} {PieceType} model");
     }
 }

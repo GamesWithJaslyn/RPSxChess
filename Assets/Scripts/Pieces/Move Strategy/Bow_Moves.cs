@@ -1,21 +1,20 @@
 using System.Collections.Generic;
+using NUnit.Framework;
+using UnityEngine;
 
 public class Bow_Moves : AMoves
 {
     public override List<int> GetMoveTiles(int pos)
     {
-        List<int> possibleMoves = new List<int>();
+        (int dr, int dc)[] bowMoves =
+        {
+            ( 0,  1), // right
+            ( 0, -1), // left
+            ( 1,  0), // down
+            (-1,  0)  // up
+        };
 
-        int up = pos - 11;
-        int down = pos + 11;
-        int left = pos - 1;
-        int right = pos + 1;
-
-        possibleMoves.Add(up);
-        possibleMoves.Add(down);
-        possibleMoves.Add(left);
-        possibleMoves.Add(right);
-
-        return possibleMoves;
+        return WithinBoardBounds(pos, bowMoves);
     }
+
 }

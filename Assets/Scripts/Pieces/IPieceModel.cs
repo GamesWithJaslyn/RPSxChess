@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// The interface serves as a common contract for all piece types, allowing for polymorphism
 /// and easier management and scalibility of different and new pieces in the game.
 /// </summary>
-public interface IPieceModel_V2
+public interface IPieceModel
 {
 
     /// <summary>

@@ -6,26 +6,26 @@ using UnityEngine.TestTools;
 
 public class PieceTests
 {
-    private IBoardModel_V2 _boardModel;
-    private IPieceModel_V2 _blueBow;
-    private IPieceModel_V2 _redBow;
-    private IPieceModel_V2 _blueTarget;
-    private IPieceModel_V2 _redTarget;
+    private IBoardModel _boardModel;
+    private IPieceModel _blueBow;
+    private IPieceModel _redBow;
+    private IPieceModel _blueTarget;
+    private IPieceModel _redTarget;
 
 
     [SetUp]
     public void SetUp()
     {
-        _boardModel = new BoardModelImpl_V2();
+        _boardModel = new BoardModelImpl();
 
-        _blueBow = new AAttackingPiece_V2(39, PieceType.Bow, Team.Blue,
+        _blueBow = new AAttackingPiece(39, PieceType.Bow, Team.Blue,
                     PieceType.Pegasus, _boardModel);
-        _redBow = new AAttackingPiece_V2(28, PieceType.Bow, Team.Red,
+        _redBow = new AAttackingPiece(28, PieceType.Bow, Team.Red,
                     PieceType.Pegasus, _boardModel);
 
-        _blueTarget = new AAttackingPiece_V2(38, PieceType.Pegasus, Team.Red,
+        _blueTarget = new AAttackingPiece(38, PieceType.Pegasus, Team.Red,
                     PieceType.Sword, _boardModel);
-        _redTarget = new AAttackingPiece_V2(27, PieceType.Pegasus, Team.Blue,
+        _redTarget = new AAttackingPiece(27, PieceType.Pegasus, Team.Blue,
                     PieceType.Sword, _boardModel);
 
         _boardModel.AddPiece(_blueBow);
@@ -37,7 +37,7 @@ public class PieceTests
     [Test]
     public void CorrectTarget()
     {
-        if (_blueBow is AAttackingPiece_V2 aAttacking)
+        if (_blueBow is AAttackingPiece aAttacking)
         {
             Assert.AreEqual(_blueTarget.PieceType, aAttacking.TargetType);
             Assert.AreNotEqual(_redBow.PieceType, aAttacking.TargetType);
@@ -64,7 +64,7 @@ public class PieceTests
         foreach (PieceModelImpl piece in _boardModel.GetAllPieces())
         {
             ITileModel tile = _boardModel.GetAllTiles().Find(tile => tile.ID == piece.Position);
-            tile.Occupant = piece;
+            tile.EnterPiece(piece);
         }
 
         Move move = new MoveBuilder(new Move(11, 22)).BuildMove();
@@ -75,7 +75,7 @@ public class PieceTests
         Assert.AreEqual(39, _blueBow.Position);
 
         List<Move> validMoves = _blueBow.GetValidMoves();
-        _blueBow.MakeMove(validMoves[0]._to);
+        _blueBow.MakeMove(validMoves[0].To);
         Assert.AreEqual(50, _blueBow.Position);
     }
 

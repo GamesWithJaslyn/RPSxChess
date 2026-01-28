@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BoardTilesPresenter_V2 : MonoBehaviour
+public class BoardTilesView : MonoBehaviour
 {
-    private IBoardModel_V2 _boardModel;
+    private IBoardModel _boardModel;
     private Dictionary<int, Vector3> _tilePos;
     private Dictionary<int, Vector3> _piecePos;
 
@@ -13,9 +13,9 @@ public class BoardTilesPresenter_V2 : MonoBehaviour
     [SerializeField] private Transform PiecesParent;
 
 
-
     [Header("Tile Prefab:")]
     [SerializeField] private GameObject _tile;
+
 
     [Header("Pieces Prefab:")]
     [SerializeField] private GameObject _piecePrefab;
@@ -27,7 +27,7 @@ public class BoardTilesPresenter_V2 : MonoBehaviour
         _tilePos = new Dictionary<int, Vector3>();
         _piecePos = new Dictionary<int, Vector3>();
 
-        _boardModel = new BoardModelImpl_V2();
+        _boardModel = new BoardModelImpl();
         InitializeTiles();
         InitializePieces();
     }
@@ -47,7 +47,7 @@ public class BoardTilesPresenter_V2 : MonoBehaviour
             var spawnedTile = Instantiate(_tile, new Vector3(j, y),
             Quaternion.identity, TilesParent);
             spawnedTile.name = $"Tile({j}, {y})";
-            spawnedTile.AddComponent<TileView_V2>().Init(_boardModel.GetAllTiles()
+            spawnedTile.AddComponent<TileView>().Init(_boardModel.GetAllTiles()
             .Find(t => t.ID == x), _boardModel);
 
             _tilePos[x] = new Vector3(j, y);
@@ -59,26 +59,26 @@ public class BoardTilesPresenter_V2 : MonoBehaviour
 
     private void InitializePieces()
     {
-        Dictionary<IPieceModel_V2, GameObject> pieceKey =
-        new Dictionary<IPieceModel_V2, GameObject>();
+        Dictionary<IPieceModel, GameObject> pieceKey =
+        new Dictionary<IPieceModel, GameObject>();
 
-        foreach (IPieceModel_V2 piece in _boardModel.GetAllPieces())
+        foreach (IPieceModel piece in _boardModel.GetAllPieces())
         {
             ITileModel tile = _boardModel.GetAllTiles().Find(tile => tile.ID == piece.Position);
-            tile.Occupant = piece;
+            tile.EnterPiece(piece);
             pieceKey.Add(piece, InstaniatePiece(piece, _piecePrefab));
         }
         _boardModel.SetPiecesDictionary(pieceKey);
     }
 
-    private GameObject InstaniatePiece(IPieceModel_V2 piece, GameObject piecePrefab)
+    private GameObject InstaniatePiece(IPieceModel piece, GameObject piecePrefab)
     {
         Vector3 position = _tilePos[piece.Position];
         position.z = -1;
 
         var spawnedPiece = Instantiate(piecePrefab, position,
         Quaternion.identity, PiecesParent);
-        spawnedPiece.AddComponent<PieceView_V2>().Init(piece);
+        spawnedPiece.AddComponent<PieceView>().Init(piece);
 
         _piecePos[piece.Position] = position;
         spawnedPiece.name = piece.Team.ToString() + "_" + piece.PieceType.ToString();

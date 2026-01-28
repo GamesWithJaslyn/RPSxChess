@@ -8,7 +8,7 @@ public class ChangingInto : MonoBehaviour
     [SerializeField] private GameObject _obj;
     [SerializeField] private List<Button> _buttons;
     private Canvas _canvas;
-    private IPieceModel_V2 _model;
+    private IPieceModel _model;
     private GameObject _currentPiece;
     private static ChangingInto _instance;
 
@@ -46,7 +46,7 @@ public class ChangingInto : MonoBehaviour
         AreButtonsActive(true);
         _currentPiece = model;
 
-        _model = _currentPiece.GetComponent<PieceView_V2>().Model;
+        _model = _currentPiece.GetComponent<PieceView>().Model;
 
         GameState.SetState(GamePhase.CHANGINGTYPE);
     }
@@ -54,7 +54,7 @@ public class ChangingInto : MonoBehaviour
     public void BowClicked()
     {
         Debug.Log("[Changing Into] - Bow Clicked");
-        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Bow);
+        _currentPiece.GetComponent<PieceView>().Model.ChangeInto(PieceType.Bow);
 
         ResetButton();
     }
@@ -62,7 +62,7 @@ public class ChangingInto : MonoBehaviour
     public void SwordClicked()
     {
         Debug.Log("[Changing Into] - Sword Clicked");
-        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Sword);
+        _currentPiece.GetComponent<PieceView>().Model.ChangeInto(PieceType.Sword);
 
         ResetButton();
     }
@@ -70,7 +70,7 @@ public class ChangingInto : MonoBehaviour
     public void PegasusClicked()
     {
         Debug.Log("[Changing Into] - Pegasus Clicked");
-        _currentPiece.GetComponent<PieceView_V2>().Model.ChangeInto(PieceType.Pegasus);
+        _currentPiece.GetComponent<PieceView>().Model.ChangeInto(PieceType.Pegasus);
 
         ResetButton();
     }

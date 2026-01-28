@@ -5,20 +5,22 @@ using Mono.CSharp;
 using Mono.CSharp.Linq;
 using UnityEngine;
 
-public class BoardModelImpl_V2 : IBoardModel_V2
+public class BoardModelImpl : IBoardModel
 {
-    private List<IPieceModel_V2> _allPieces;
+    private List<IPieceModel> _allPieces;
     private List<ITileModel> _allTiles;
-    private Dictionary<IPieceModel_V2, GameObject> _piecesKey;
+    private Dictionary<IPieceModel, GameObject> _piecesKey;
     private bool _bluesTurn;
-    private IPieceModel_V2 _selectedPiece;
+    private IPieceModel _selectedPiece;
     private GameObject _selectedPieceView;
+    private CreateTiles _createTiles;
 
-    public BoardModelImpl_V2()
+    public BoardModelImpl()
     {
-        _allPieces = new CreatePieces_V2(this).GetPieces();
-        _allTiles = new CreateTiles_V2(this).GetTiles();
-        _piecesKey = new Dictionary<IPieceModel_V2, GameObject>();
+        _createTiles = new CreateTiles();
+        _allPieces = new CreatePieces(this).GetPieces();
+        _allTiles = _createTiles.GetTiles();
+        _piecesKey = new Dictionary<IPieceModel, GameObject>();
         _bluesTurn = true;
         _selectedPiece = null;
         _selectedPieceView = null;
@@ -26,11 +28,11 @@ public class BoardModelImpl_V2 : IBoardModel_V2
         GameState.OnRematch += ResetBoard;
     }
 
-    public IPieceModel_V2 SelectPiece(int pos)
+    public IPieceModel SelectPiece(int pos)
     {
         UnSelectPiece();
 
-        foreach (IPieceModel_V2 pieceModel in _allPieces)
+        foreach (IPieceModel pieceModel in _allPieces)
         {
             if (pieceModel.IsAlive)
             {
@@ -62,10 +64,10 @@ public class BoardModelImpl_V2 : IBoardModel_V2
     }
     private void UnselectAllPieces()
     {
-        foreach (IPieceModel_V2 piece in _allPieces) { piece.IsSelected = false; }
+        foreach (IPieceModel piece in _allPieces) { piece.IsSelected = false; }
     }
 
-    public void SetPiecesDictionary(Dictionary<IPieceModel_V2, GameObject> pk) { _piecesKey = pk; }
+    public void SetPiecesDictionary(Dictionary<IPieceModel, GameObject> pk) { _piecesKey = pk; }
     public void SetTilesAsValidMoveTiles(List<Move> validMoveTiles)
     {
         UnHighlightAllTiles();
@@ -73,7 +75,7 @@ public class BoardModelImpl_V2 : IBoardModel_V2
         {
             foreach (ITileModel tile in _allTiles)
             {
-                if (move._to == tile.ID)
+                if (move.To == tile.ID)
                 {
                     tile.SetValid(true);
                 }
@@ -82,10 +84,10 @@ public class BoardModelImpl_V2 : IBoardModel_V2
     }
 
 
-    public IPieceModel_V2 GetSelectedPiece() { return _selectedPiece; }
-    public List<IPieceModel_V2> GetAllPieces() { return _allPieces; }
+    public IPieceModel GetSelectedPiece() { return _selectedPiece; }
+    public List<IPieceModel> GetAllPieces() { return _allPieces; }
     public List<ITileModel> GetAllTiles() { return _allTiles; }
-    public IPieceModel_V2 GetPieceAt(int tileID)
+    public IPieceModel GetPieceAt(int tileID)
     {
         return _allPieces.FirstOrDefault(piece => piece?.Position == tileID);
     }
@@ -96,8 +98,24 @@ public class BoardModelImpl_V2 : IBoardModel_V2
 
     public bool IsInside(int tileID) { return _allTiles.Any(t => t.ID == tileID); }
     public bool IsBlueTurn() { return _bluesTurn; }
-    public void AddPiece(IPieceModel_V2 piece) { _allPieces.Add(piece); }
-    public void RemovePiece(IPieceModel_V2 piece) { _allPieces.Remove(piece); }
+    public void AddPiece(IPieceModel piece) { _allPieces.Add(piece); }
+    public void RemovePiece(IPieceModel piece) { _allPieces.Remove(piece); }
+
+    public void ShowArrow()
+    {
+        if (_selectedPiece is AAttackingPiece attackingPiece)
+        {
+            attackingPiece.ShowArrow();
+        }
+    }
+
+    public void ResetArrow()
+    {
+        if (_selectedPiece is AAttackingPiece attackingPiece)
+        {
+            attackingPiece.ResetArrow();
+        }
+    }
 
     public bool TryMovePiece(int toTile)
     {
@@ -107,7 +125,6 @@ public class BoardModelImpl_V2 : IBoardModel_V2
         }
         else
         {
-            UnSelectPiece();
             return false;
         }
     }
@@ -116,34 +133,40 @@ public class BoardModelImpl_V2 : IBoardModel_V2
     {
         if (_selectedPiece == null) return false;
         Move moveMade = _selectedPiece.MakeMove(toTile);
-        if (moveMade._to == toTile)
-        {
-            if (moveMade._flags.Contains(MoveFlags.Capture))
-            {
-                IPieceModel_V2 target = GetTileAt(toTile).Occupant;
-                target.SetDead();
 
-                if (ZeroPiecesLeft(target.Team))
+        if (moveMade.To == toTile)
+        {
+            ITileModel targetTile = GetTileAt(moveMade.To);
+            GetTileAt(moveMade.From).EnterPiece(null);
+
+            if (moveMade.Flags.Contains(MoveFlags.Capture))
+            {
+                IPieceModel capturedPiece = targetTile.Occupant;
+                targetTile.EnterPiece(null);
+                capturedPiece.SetDead();
+
+                if (ZeroPiecesLeft(capturedPiece.Team))
                 {
                     GameState.OnGameWon?.Invoke(_selectedPiece.Team);
+                    return true;
                 }
-
-                GetTileAt(toTile).Occupant = null;
             }
 
-            GetTileAt(moveMade._from).Occupant = null;
-            GetTileAt(toTile).Occupant = _selectedPiece;
+            targetTile.EnterPiece(_selectedPiece);
+            Debug.Log($"[BoardModelImpl] - {targetTile.Occupant.Team}_{targetTile.Occupant.PieceType} now on tile {targetTile.ID}");
 
-            if (moveMade._flags.Contains(MoveFlags.Promotion))
+            if (moveMade.Flags.Contains(MoveFlags.Promotion))
             {
                 ChangingInto.Instance.ShowChangeOptions(_selectedPieceView);
             }
 
             SwitchTurn();
             return true;
-
         }
-        else { return false; }
+        else
+        {
+            return false;
+        }
     }
 
 
@@ -164,7 +187,7 @@ public class BoardModelImpl_V2 : IBoardModel_V2
         UnSelectPiece();
         ResetTiles();
 
-        foreach (IPieceModel_V2 piece in _allPieces)
+        foreach (IPieceModel piece in _allPieces)
         {
             piece.Reset();
         }
@@ -176,11 +199,13 @@ public class BoardModelImpl_V2 : IBoardModel_V2
     /// </summary>
     private void ResetTiles()
     {
-        foreach (TileModel tile in _allTiles)
+        foreach (TileModelImpl tile in _allTiles)
         {
-            tile.Occupant = null;
+            tile.EnterPiece(null);
             tile.SetValid(false);
         }
+
+        _createTiles.ChangeToWater(_allTiles);
     }
 
     private bool ZeroPiecesLeft(Team team)
@@ -189,7 +214,7 @@ public class BoardModelImpl_V2 : IBoardModel_V2
         int swords = 0;
         int pegasus = 0;
 
-        foreach (AAttackingPiece_V2 piece in _allPieces)
+        foreach (AAttackingPiece piece in _allPieces)
         {
             if (piece.Team == team && piece.IsAlive == true)
             {

@@ -7,19 +7,19 @@ using UnityEngine.TestTools;
 
 public class MoveStrategyTests
 {
-    private IBoardModel_V2 _boardModel;
-    private IPieceModel_V2 _bow;
-    private IPieceModel_V2 _sword;
-    private IPieceModel_V2 _pegasus;
+    private IBoardModel _boardModel;
+    private IPieceModel _bow;
+    private IPieceModel _sword;
+    private IPieceModel _pegasus;
 
 
     [SetUp]
     public void SetUp()
     {
-        _boardModel = new BoardModelImpl_V2();
-        _bow = new AAttackingPiece_V2(35, PieceType.Bow, Team.Blue, PieceType.Pegasus, _boardModel);
-        _sword = new AAttackingPiece_V2(24, PieceType.Sword, Team.Red, PieceType.Bow, _boardModel);
-        _pegasus = new AAttackingPiece_V2(36, PieceType.Pegasus, Team.Red,
+        _boardModel = new BoardModelImpl();
+        _bow = new AAttackingPiece(35, PieceType.Bow, Team.Blue, PieceType.Pegasus, _boardModel);
+        _sword = new AAttackingPiece(24, PieceType.Sword, Team.Red, PieceType.Bow, _boardModel);
+        _pegasus = new AAttackingPiece(36, PieceType.Pegasus, Team.Red,
         PieceType.Sword, _boardModel);
 
         _boardModel.AddPiece(_bow);
@@ -53,7 +53,7 @@ public class MoveStrategyTests
         Move move_right = new MoveBuilder(new Move(106, 107))
                         .AddFlags(new List<MoveFlags> { MoveFlags.Capture }).BuildMove();
 
-        AAttackingPiece_V2 newBow = new AAttackingPiece_V2(106, PieceType.Bow,
+        AAttackingPiece newBow = new AAttackingPiece(106, PieceType.Bow,
              Team.Blue, PieceType.Pegasus, _boardModel);
         _boardModel.AddPiece(newBow);
 

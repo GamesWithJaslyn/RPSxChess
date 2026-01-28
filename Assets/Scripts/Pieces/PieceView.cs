@@ -6,26 +6,22 @@ using UnityEngine;
 /// This class is responsible for the visual representation of a piece in the game.
 /// It handles the movement of the piece in the game world.
 /// </summary>
-public class PieceView_V2 : MonoBehaviour
+public class PieceView : MonoBehaviour
 {
-    public IPieceModel_V2 Model { get; private set; }
+    public IPieceModel Model { get; private set; }
     [SerializeField] private Color _teamColor;
 
     private Transform _color;
     private Transform _pieceType;
 
-    public void Init(IPieceModel_V2 model)
+    public void Init(IPieceModel model)
     {
         _color = gameObject.transform.Find("Color");
         _pieceType = gameObject.transform.Find("Type");
 
         Model = model;
         UpdateType();
-
-        Model.OnMoved += UpdatePosition;
-        Model.OnDeath += SetDead;
-        Model.OnChangeInto += UpdateType;
-        Model.OnReset += Reset;
+        AddEvents();
 
         if (Model.Team == Team.Blue)
         {
@@ -38,9 +34,20 @@ public class PieceView_V2 : MonoBehaviour
 
     }
 
-    public void SetDead() { gameObject.SetActive(false); }
+    public void SetDead()
+    {
+        SettingActive(false);
+    }
     //private void OnDestroy() { RemoveEvents(); }
-    private void OnDisable() { if (Model != null) RemoveEvents(); }
+    private void OnDisable()
+    {
+        if (Model != null)
+        {
+            RemoveEvents();
+            SettingActive(false);
+        }
+
+    }
 
     public void UpdatePosition(int pos)
     {
@@ -68,9 +75,27 @@ public class PieceView_V2 : MonoBehaviour
 
     public void Reset()
     {
-        gameObject.SetActive(true);
+        Debug.Log("Reseting piece view");
+
+        SettingActive(true);
+        AddEvents();
         UpdatePosition(Model.Position);
         UpdateType();
+    }
+
+    private void SettingActive(bool isItTrue)
+    {
+        _color.gameObject.SetActive(isItTrue);
+        _pieceType.gameObject.SetActive(isItTrue);
+        //this.enabled = isItTrue;
+    }
+
+    private void AddEvents()
+    {
+        Model.OnMoved += UpdatePosition;
+        Model.OnDeath += SetDead;
+        Model.OnChangeInto += UpdateType;
+        Model.OnReset += Reset;
     }
 
     private void RemoveEvents()

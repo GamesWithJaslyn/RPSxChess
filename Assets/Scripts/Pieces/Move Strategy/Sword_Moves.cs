@@ -2,28 +2,20 @@ using System.Collections.Generic;
 
 public class Sword_Moves : AMoves
 {
-      public override List<int> GetMoveTiles(int pos)
-     {
-        List<int> possibleMoves = new List<int>();
+    public override List<int> GetMoveTiles(int pos)
+    {
+        (int dr, int dc)[] swordMoves =
+        {
+            ( 0,  1), // right
+            ( 0, -1), // left
+            ( 1,  0), // down
+            ( 1, 1), // down-right
+            ( 1, -1), // down-left
+            (-1,  1), // up-right
+            (-1, -1), // up-left
+            (-1,  0)  // up
+        };
 
-        int up = pos - 11;
-        int upRight = pos - 10;
-        int upLeft = pos - 12;
-        int down = pos + 11;
-        int downRight = pos + 10;
-        int downLeft = pos + 12;
-        int left = pos - 1;
-        int right = pos + 1;
-
-        possibleMoves.Add(up);
-        possibleMoves.Add(upRight);
-        possibleMoves.Add(upLeft);
-        possibleMoves.Add(down);
-        possibleMoves.Add(downRight);
-        possibleMoves.Add(downLeft);
-        possibleMoves.Add(left);
-        possibleMoves.Add(right);
-
-        return possibleMoves;
+        return WithinBoardBounds(pos, swordMoves);
     }
 }
