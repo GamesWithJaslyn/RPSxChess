@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using Mono.CSharp;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Bow_SpecialAttack : ASpecialAttack
@@ -19,9 +18,6 @@ public class Bow_SpecialAttack : ASpecialAttack
 
         List<int> withinBoardBounds = WithinBoardBounds.GetTiles(piece.Position, attackRange);
 
-        ///return WithinBoardBounds.GetTiles(piece.Position, attackRange);
-
-
         return ValidAttackTiles(board, piece, withinBoardBounds);
     }
 
@@ -36,7 +32,7 @@ public class Bow_SpecialAttack : ASpecialAttack
                 continue;
             }
 
-            IPieceModel targetPiece = board.GetPieceAt(tileID);
+            IPieceModel targetPiece = board.GetTileAt(tileID).Occupant;
 
             if (targetPiece != null && targetPiece.PieceType == PieceType.Pegasus &&
                targetPiece.IsSameTeam(piece.Team) == false && targetPiece.IsAlive)
@@ -52,10 +48,10 @@ public class Bow_SpecialAttack : ASpecialAttack
         return validTiles;
     }
 
-    public override bool ExecuteSpecialAttack(IBoardModel board, IPieceModel piece, int targetTileID)
+    public override async Task<bool> ExecuteSpecialAttack(IBoardModel board, IPieceModel piece, int targetTileID)
     {
         List<int> specialAttackRange = GetSpecialAttackRange(board, piece);
-        IPieceModel selectedPiece = board.GetSelectedPiece();
+        AAttackingPiece selectedPiece = board.GetSelectedPiece() as AAttackingPiece;
         if (selectedPiece == null || selectedPiece.PieceType != PieceType.Bow)
         {
             Debug.Log("No Bow piece is selected for the special attack.");
@@ -67,13 +63,16 @@ public class Bow_SpecialAttack : ASpecialAttack
         {
             if (IsSpecialAttackReady)
             {
-                IPieceModel targetPiece = board.GetPieceAt(targetTileID);
+                IPieceModel targetPiece = board.GetTileAt(targetTileID).Occupant;
                 if (targetPiece != null && targetPiece.PieceType == PieceType.Pegasus
                     && targetPiece.IsSameTeam(selectedPiece.Team) == false && targetPiece.IsAlive)
                 {
+                    await WaitForArrow(board, targetPiece);
                     board.GetTileAt(targetTileID).EnterPiece(null);
+                    selectedPiece.CallArrowHitTarget(targetPiece);
                     targetPiece.SetDead();
                     CancelSpecialAttack(board);
+
                     return true;
                 }
                 else
@@ -93,6 +92,29 @@ public class Bow_SpecialAttack : ASpecialAttack
             CancelSpecialAttack(board);
             return false;
         }
+    }
+
+    async Task WaitForArrow(IBoardModel board, IPieceModel targetPiece)
+    {
+        var selectedPiece = board.GetSelectedPiece() as AAttackingPiece;
+        if (selectedPiece == null)
+        {
+            return;
+        }
+
+        var tcs = new TaskCompletionSource<bool>();
+        void OnHitTarget(IPieceModel hitPiece)
+        {
+            if (hitPiece == targetPiece)
+            {
+                tcs.TrySetResult(true);
+            }
+        }
+
+        selectedPiece.OnArrowHitTarget += OnHitTarget;
+        await selectedPiece.CallArrowShot(targetPiece);
+        await tcs.Task;
+        selectedPiece.OnArrowHitTarget -= OnHitTarget;
     }
 
     private void IncreasingRow(ref (int dr, int dc)[] attackRange)

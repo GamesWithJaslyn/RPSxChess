@@ -12,6 +12,7 @@ public class PieceView : MonoBehaviour
     [SerializeField] private Color _teamColor;
     private Transform _color;
     private Transform _pieceType;
+    public Arrow _arrow;
 
     public void Init(IPieceModel model)
     {
@@ -21,6 +22,11 @@ public class PieceView : MonoBehaviour
         Model = model;
         UpdateType();
         AddEvents();
+
+        _arrow = GetComponentInChildren<Arrow>();
+        AAttackingPiece attack = (AAttackingPiece)Model;
+        _arrow.SetPieceViewAndModel(this, attack);
+        _arrow.OnArrowReachedTarget += attack.ReachedTarget;
 
         if (Model.Team == Team.Blue)
         {

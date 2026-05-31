@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public interface IBoardModel
@@ -97,7 +98,7 @@ public interface IBoardModel
     void ShowSpecialAttackRange();
     void HideSpecialAttackRange();
 
-    bool? ExecuteSpecialAttack(int tileID);
+    Task<bool?> ExecuteSpecialAttack(int tileID);
 
     /// <summary>
     /// Switches the turn to the other player.

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Codice.CM.Common.Merge;
 using Mono.CSharp;
 using Mono.CSharp.Linq;
@@ -173,6 +174,11 @@ public class BoardModelImpl : IBoardModel
                 }
             }
 
+            if (SpecialAttackers.Contains(_selectedPiece.PieceType) && _selectedPiece.GetSpecialAttack().IsSpecialAttackReady)
+            {
+                _selectedPiece?.GetSpecialAttack().CancelSpecialAttack(this);
+            }
+
             targetTile.EnterPiece(_selectedPiece);
             Debug.Log($"[BoardModelImpl] - {targetTile.Occupant.Team}_{targetTile.Occupant.PieceType} now on tile {targetTile.ID}");
 
@@ -195,19 +201,23 @@ public class BoardModelImpl : IBoardModel
         List<int> specialAttackRange = _selectedPiece.GetSpecialAttack()
                                                      .GetSpecialAttackRange(this, _selectedPiece);
         SetTilesAsValidSpecialAttackTiles(specialAttackRange);
+        ((AAttackingPiece)_selectedPiece)?.CallShowArrow();
+        Debug.Log($"[BoardModelImpl] - Show Arrow!!!!");
+
     }
 
     public void HideSpecialAttackRange()
     {
         _selectedPiece?.GetSpecialAttack().CancelSpecialAttack(this);
+        ((AAttackingPiece)_selectedPiece)?.CallHideArrow();
     }
 
-    public bool? ExecuteSpecialAttack(int tileID)
+    public async Task<bool?> ExecuteSpecialAttack(int tileID)
     {
         if (_selectedPiece != null && SpecialAttackers.Contains(_selectedPiece.PieceType))
         {
             Debug.Log($"[BoardModelImpl] - Executing special attack on tile {tileID} by piece at position {_selectedPiece.Position}");
-            bool? result = _selectedPiece?.GetSpecialAttack()
+            bool? result = await _selectedPiece?.GetSpecialAttack()
                                          .ExecuteSpecialAttack(this, _selectedPiece, tileID);
             if (result == true)
             {
@@ -216,17 +226,22 @@ public class BoardModelImpl : IBoardModel
                     GameState.OnGameWon?.Invoke(_selectedPiece.Team);
                     return true;
                 }
+                Debug.Log($"[BoardModelImpl] - special attacked worked");
+
 
                 SwitchTurn();
             }
             else if (result == false || result == null)
             {
+                Debug.Log($"[BoardModelImpl] - special attacked failed");
                 UnHighlightAllTiles();
                 _selectedPiece.GetSpecialAttack().CancelSpecialAttack(this);
             }
 
             return result;
         }
+
+        Debug.Log($"[BoardModelImpl] - special attacked failed");
 
         return false;
     }

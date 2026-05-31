@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public interface ISpecialAttack
@@ -10,7 +11,7 @@ public interface ISpecialAttack
     /// </summary>
     /// <param name="board"> The board the given Piece is on. </param>
     /// <param name="piece"> The Piece that is going to make the special attack. </param>
-    bool ExecuteSpecialAttack(IBoardModel board, IPieceModel piece, int targetTileID);
+    Task<bool> ExecuteSpecialAttack(IBoardModel board, IPieceModel piece, int targetTileID);
 
     /// <summary>
     /// Shows the special attack range for a piece.
