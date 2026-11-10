@@ -119,6 +119,11 @@ public abstract class AMoves : IMoveStrategy
             {
                 if (tile.To == targetTile) { OnTile = true; }
             }
+
+            foreach (int tileId in enemy.GetSpecialAttack().GetSpecialAttackRange(board, enemy))
+            {
+                if (tileId == targetTile) { OnTile = true; }
+            }
         }
 
         Debug.Log($"[AMoves] - count of enemies: {enemies.Count}");
