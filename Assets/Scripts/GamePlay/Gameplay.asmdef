@@ -1,7 +1,9 @@
 {
-    "name": "ScriptReference",
+    "name": "Gameplay",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:765a6f560e33a42938fd60c0c052fde2"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

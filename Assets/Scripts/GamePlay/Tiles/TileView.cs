@@ -13,6 +13,8 @@ public class TileView : MonoBehaviour
     [Header("Tile Properties")]
     [SerializeField] private int _id;
     [SerializeField] Color32 _currentColor;
+    private static Color32 _baseColor;
+    private static Color32 _offesetColor;
 
     public ITileModel _model { get; private set; }
     private IPieceModel _piece;
@@ -25,6 +27,8 @@ public class TileView : MonoBehaviour
         _boardModel = boardModel;
         _id = model.ID;
         _piece = null;
+        _baseColor = TileColor_DataBase.Regular_BaseColor;
+        _offesetColor = TileColor_DataBase.Regular_OffsetColor;
         AddEvents();
 
         UpdateType();
@@ -36,7 +40,7 @@ public class TileView : MonoBehaviour
         _piece = piece;
     }
 
-    private void UpdateType()
+    public void UpdateType()
     {
         SpriteRenderer ren = this.GetComponent<SpriteRenderer>();
 
@@ -44,8 +48,8 @@ public class TileView : MonoBehaviour
         {
             case TileType.Regular:
                 var isOffset = _id % 2 == 1;
-                ren.color = isOffset ? TileColor_DataBase.Regular_OffsetColor
-                                      : TileColor_DataBase.Regular_BaseColor;
+                ren.color = isOffset ? _offesetColor
+                                      : _baseColor;
                 break;
             case TileType.Water:
                 ren.color = TileColor_DataBase.WaterColor;
@@ -59,6 +63,12 @@ public class TileView : MonoBehaviour
 
     }
 
+    public static void UpdatePalette(Color32 baseC, Color32 offestC)
+    {
+        _baseColor = baseC;
+        _offesetColor = offestC;
+    }
+
     void OnMouseDown()
     {
         if (GameState.State().Equals(GamePhase.PLAYING))
@@ -67,13 +77,7 @@ public class TileView : MonoBehaviour
 
             // Convert the screen position to a world position
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
-
-            // In 2D, the z-value from ScreenToWorldPoint might be the camera's z position (e.g., -10).
-            // To work in the 2D plane, set the z position to 0 or match your object's z position.
             mouseWorldPosition.z = 0f;
-
-            // Log the world position to the console for verification
-            Debug.Log("Mouse clicked at world position: " + mouseWorldPosition);
             HandleClick();
         }
     }
@@ -84,7 +88,7 @@ public class TileView : MonoBehaviour
         if (_boardModel.MovePiece(_id)) { return; }
 
         var selectedPiece = _boardModel.GetSelectedPiece();
-        // CASE 3: Selecting a piece
+        // CASE 2: Selecting a piece
         if (selectedPiece != null)
         {
             if (!_boardModel.SpecialAttackers.Contains(selectedPiece.PieceType))

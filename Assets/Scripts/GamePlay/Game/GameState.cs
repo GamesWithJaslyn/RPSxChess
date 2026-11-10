@@ -48,7 +48,6 @@ public class GameState : MonoBehaviour
             Instance._isPlaying = false;
             Instance._blueWinScreen.SetActive(true);
             Instance._redWinScreen.SetActive(false);
-
         }
         else
         {

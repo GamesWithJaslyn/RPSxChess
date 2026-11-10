@@ -1,14 +1,9 @@
-using UnityEngine;
-using TMPro;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 
 public class LocalButton : AButtons
 {
-    [Header("Fonts")]
-    [SerializeField] private TMP_FontAsset Local_Font;
-    [SerializeField] private TMP_FontAsset Local_ShadowFont;
+    public Color_DataBase Color;
 
     public void OnClick()
     {
@@ -33,17 +28,17 @@ public class LocalButton : AButtons
 
     private void ChangeColorFont()
     {
-        Local = new Color32(225, 255, 187, 255);
-        Online = new Color32(97, 175, 171, 255);
-        Options = new Color32(6, 86, 94, 255);
-        Quit = new Color32(0, 0, 0, 255);
-        BaseTile = new Color32(7, 71, 153, 255);
-        OffsetTile = new Color32(0, 26, 110, 255);
-        BowColor = new Color32(176, 199, 121, 255);
-        PegasusColor = new Color32(135, 175, 241, 255);
+        Local = Color.Local_Hover;
+        Online = Color.Local_Online;
+        Options = Color.Local_Options;
+        Quit = Color.Local_Quit;
+        BaseTile = Color.Local_BaseTile;
+        OffsetTile = Color.Local_OffesetTile;
+        BowColor = Color.Local_BlueTeam;
+        PegasusColor = Color.Local_RedTeam;
 
-        Title = Local_Font;
-        ShadowFont = Local_ShadowFont;
+        Title = Color.Local_Font;
+        ShadowFont = Color.Local_ShadowFont;
     }
 
     private void ButtonChange()

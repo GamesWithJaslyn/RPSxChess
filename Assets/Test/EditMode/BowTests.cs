@@ -167,7 +167,7 @@
 //         _blueBow.SetPos(105);
 //         Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(2));
 //         Assert.AreNotEqual(2, _blueBow.GetPieceType());
-        
+
 //         _blueBow.SetPos(119);
 //         _blueBow.ChangeInto(1);
 //         Assert.AreEqual(1, _blueBow.GetPieceType());
@@ -175,7 +175,7 @@
 //         _blueBow.SetPos(105);
 //         Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(2));
 //         Assert.AreNotEqual(2, _blueBow.GetPieceType());
-        
+
 //         _blueBow.SetPos(119);
 //         Assert.Throws<ArgumentException>(() =>  _blueBow.ChangeInto(3));
 //         Assert.AreNotEqual(3, _blueBow.GetPieceType());

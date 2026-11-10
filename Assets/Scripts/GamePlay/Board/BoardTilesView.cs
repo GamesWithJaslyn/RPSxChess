@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BoardTilesView : MonoBehaviour
 {
     public IBoardModel _boardModel;
+    public BoardView _boardView;
     public static Dictionary<int, Vector3> TilePos;
     private Dictionary<int, Vector3> _piecePos;
 
@@ -19,10 +19,12 @@ public class BoardTilesView : MonoBehaviour
 
     [Header("Pieces Prefab:")]
     [SerializeField] private GameObject _piecePrefab;
-    [SerializeField] private List<Sprite> _pieceTypes;
 
     [Header("Board")]
+    public Color_DataBase Color;
     [SerializeField] private SpriteRenderer Border;
+    private List<TileView> _tileViews;
+    private List<PieceView> _pieceViews;
 
 
     void Start()
@@ -30,9 +32,13 @@ public class BoardTilesView : MonoBehaviour
         TilePos = new Dictionary<int, Vector3>();
         _piecePos = new Dictionary<int, Vector3>();
 
-        gameObject.AddComponent<BoardView>().Init(Border, new BoardModelImpl());
+        _tileViews = new List<TileView>();
+        _pieceViews = new List<PieceView>();
 
-        _boardModel = gameObject.GetComponent<BoardView>().Model;
+        gameObject.AddComponent<BoardView>().Init(Border, new BoardModelImpl(), Color);
+
+        _boardView = gameObject.GetComponent<BoardView>();
+        _boardModel = _boardView.Model;
         _piecePrefab.transform.localScale = _tile.transform.localScale;
 
         InitializeTiles();
@@ -61,9 +67,18 @@ public class BoardTilesView : MonoBehaviour
 
             TilePos[x] = new Vector3(j, y);
             j += change;
+
+            var tileView = spawnedTile.GetComponent<TileView>();
+            _tileViews.Add(tileView);
+
         }
 
         Camera.main.transform.position = new Vector3((float)j / 2 - 0.5f, (float)y / 2, -10);
+    }
+
+    public List<TileView> GetTileViews()
+    {
+        return _tileViews;
     }
 
     private void InitializePieces()
@@ -87,12 +102,18 @@ public class BoardTilesView : MonoBehaviour
 
         var spawnedPiece = Instantiate(piecePrefab, position,
         Quaternion.identity, PiecesParent);
-        spawnedPiece.AddComponent<PieceView>().Init(piece);
+        spawnedPiece.AddComponent<PieceView>().Init(piece, Color);
+        _pieceViews.Add(spawnedPiece.GetComponent<PieceView>());
 
         _piecePos[piece.Position] = position;
         spawnedPiece.name = piece.Team.ToString() + "_" + piece.PieceType.ToString();
 
         return spawnedPiece;
+    }
+
+    public List<PieceView> GetPieceViews()
+    {
+        return _pieceViews;
     }
 
 }

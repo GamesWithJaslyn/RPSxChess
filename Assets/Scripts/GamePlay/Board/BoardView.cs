@@ -1,3 +1,4 @@
+using Mono.CSharp;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,34 +6,30 @@ public class BoardView : MonoBehaviour
 {
     public IBoardModel Model { get; private set; }
     private SpriteRenderer _border;
-
     private Color32 _blueBorder;
     private Color32 _redBorder;
 
-    public void Init(SpriteRenderer border, IBoardModel boardModel)
+    public void Init(SpriteRenderer border, IBoardModel boardModel, Color_DataBase Color)
     {
         _border = border;
         Model = boardModel;
 
-        _blueBorder = new Color32(0, 51, 143, 255);
-        _redBorder = new Color32(90, 12, 12, 255);
-
-        _border.color = _blueBorder;
-        Model.OnChangeTurn += ChangeTurnColor;
+        UpdateBorderColor(Color.Default_BlueTeam, Color.Default_RedTeam);
+        ChangeColor(true);
+        Model.OnChangeTurn += ChangeColor;
         GameState.OnRematch += Reset;
 
     }
 
-    public void ChangeTurnColor(bool isBlueTurn)
+    public void UpdateBorderColor(Color32 blueTeam, Color32 redTeam)
     {
-        if (isBlueTurn)
-        {
-            _border.color = _blueBorder;
-        }
-        else
-        {
-            _border.color = _redBorder;
-        }
+        _blueBorder = blueTeam;
+        _redBorder = redTeam;
+    }
+
+    public void ChangeColor(bool isBlueTurn)
+    {
+        _border.color = isBlueTurn ? _blueBorder : _redBorder;
     }
 
     public void Reset()
@@ -44,7 +41,7 @@ public class BoardView : MonoBehaviour
     {
         if (Model != null)
         {
-            Model.OnChangeTurn -= ChangeTurnColor;
+            Model.OnChangeTurn -= ChangeColor;
             GameState.OnRematch -= Reset;
 
         }

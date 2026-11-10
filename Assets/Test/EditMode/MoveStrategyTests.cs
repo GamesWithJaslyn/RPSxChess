@@ -17,10 +17,14 @@ public class MoveStrategyTests
     public void SetUp()
     {
         _boardModel = new BoardModelImpl();
-        _bow = new AAttackingPiece(35, PieceType.Bow, Team.Blue, PieceType.Pegasus, _boardModel);
-        _sword = new AAttackingPiece(24, PieceType.Sword, Team.Red, PieceType.Bow, _boardModel);
-        _pegasus = new AAttackingPiece(36, PieceType.Pegasus, Team.Red,
+        _bow = new AAttackingPiece(35, PieceType.Bow, Team.Blue, PieceType.Pegasus,
         PieceType.Sword, _boardModel);
+
+        _sword = new AAttackingPiece(24, PieceType.Sword, Team.Red, PieceType.Bow,
+        PieceType.Pegasus, _boardModel);
+
+        _pegasus = new AAttackingPiece(36, PieceType.Pegasus, Team.Red, PieceType.Sword,
+         PieceType.Bow, _boardModel);
 
         _boardModel.AddPiece(_bow);
         _boardModel.AddPiece(_sword);
@@ -54,7 +58,7 @@ public class MoveStrategyTests
                         .AddFlags(new List<MoveFlags> { MoveFlags.Capture }).BuildMove();
 
         AAttackingPiece newBow = new AAttackingPiece(106, PieceType.Bow,
-             Team.Blue, PieceType.Pegasus, _boardModel);
+             Team.Blue, PieceType.Pegasus, PieceType.Sword, _boardModel);
         _boardModel.AddPiece(newBow);
 
         List<Move> bowMoves = new List<Move> { move_up, move_down, move_right, };

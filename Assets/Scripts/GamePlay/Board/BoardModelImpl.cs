@@ -2,22 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Codice.CM.Common.Merge;
-using Mono.CSharp;
-using Mono.CSharp.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 public class BoardModelImpl : IBoardModel
 {
+    public bool _bluesTurn { get; private set; }
     private List<IPieceModel> _allPieces;
     private List<ITileModel> _allTiles;
     private Dictionary<IPieceModel, GameObject> _piecesKey;
-    private bool _bluesTurn;
+
     private IPieceModel _selectedPiece;
     private GameObject _selectedPieceView;
     private CreateTiles _createTiles;
+
+    private List<AAttackingPiece> _kingList;
 
     public event Action<bool> OnChangeTurn;
     public List<PieceType> SpecialAttackers { get; } = new List<PieceType> { PieceType.Bow };
@@ -28,6 +26,7 @@ public class BoardModelImpl : IBoardModel
         _allPieces = new CreatePieces(this).GetPieces();
         _allTiles = _createTiles.GetTiles();
         _piecesKey = new Dictionary<IPieceModel, GameObject>();
+        _kingList = new List<AAttackingPiece>();
         _bluesTurn = true;
         _selectedPiece = null;
         _selectedPieceView = null;
@@ -46,7 +45,6 @@ public class BoardModelImpl : IBoardModel
                 if (pieceModel.Position == pos && ((_bluesTurn && pieceModel.IsSameTeam(Team.Blue))
                 || (!_bluesTurn && pieceModel.IsSameTeam(Team.Red))))
                 {
-                    Debug.Log("[BoardModelImpl] - Selecting piece at position: " + pos);
                     _selectedPiece = pieceModel;
                     _selectedPieceView = _piecesKey[_selectedPiece];
                     _selectedPiece.IsSelected = true;
@@ -167,20 +165,20 @@ public class BoardModelImpl : IBoardModel
                 targetTile.EnterPiece(null);
                 capturedPiece.SetDead();
 
-                if (ZeroPiecesLeft(capturedPiece.Team))
+                if (ZeroPiecesLeftOfType((AAttackingPiece)capturedPiece))
                 {
                     GameState.OnGameWon?.Invoke(_selectedPiece.Team);
                     return true;
                 }
             }
 
-            if (SpecialAttackers.Contains(_selectedPiece.PieceType) && _selectedPiece.GetSpecialAttack().IsSpecialAttackReady)
+            if (SpecialAttackers.Contains(_selectedPiece.PieceType)
+            && _selectedPiece.GetSpecialAttack().IsSpecialAttackReady)
             {
                 _selectedPiece?.GetSpecialAttack().CancelSpecialAttack(this);
             }
 
             targetTile.EnterPiece(_selectedPiece);
-            Debug.Log($"[BoardModelImpl] - {targetTile.Occupant.Team}_{targetTile.Occupant.PieceType} now on tile {targetTile.ID}");
 
             if (moveMade.Flags.Contains(MoveFlags.Promotion))
             {
@@ -202,8 +200,6 @@ public class BoardModelImpl : IBoardModel
                                                      .GetSpecialAttackRange(this, _selectedPiece);
         SetTilesAsValidSpecialAttackTiles(specialAttackRange);
         ((AAttackingPiece)_selectedPiece)?.CallShowArrow();
-        Debug.Log($"[BoardModelImpl] - Show Arrow!!!!");
-
     }
 
     public void HideSpecialAttackRange()
@@ -216,32 +212,28 @@ public class BoardModelImpl : IBoardModel
     {
         if (_selectedPiece != null && SpecialAttackers.Contains(_selectedPiece.PieceType))
         {
-            Debug.Log($"[BoardModelImpl] - Executing special attack on tile {tileID} by piece at position {_selectedPiece.Position}");
+            Team selectedPieceTeam = _selectedPiece.Team;
             bool? result = await _selectedPiece?.GetSpecialAttack()
-                                         .ExecuteSpecialAttack(this, _selectedPiece, tileID);
+                                .ExecuteSpecialAttack(this, _selectedPiece, tileID);
+
             if (result == true)
             {
-                if (ZeroPiecesLeft(GetPieceAt(tileID).Team))
+                if (ZeroPiecesLeftOfType((AAttackingPiece)GetPieceAt(tileID)))
                 {
-                    GameState.OnGameWon?.Invoke(_selectedPiece.Team);
+                    GameState.OnGameWon?.Invoke(selectedPieceTeam);
                     return true;
                 }
-                Debug.Log($"[BoardModelImpl] - special attacked worked");
-
 
                 SwitchTurn();
             }
             else if (result == false || result == null)
             {
-                Debug.Log($"[BoardModelImpl] - special attacked failed");
                 UnHighlightAllTiles();
                 _selectedPiece.GetSpecialAttack().CancelSpecialAttack(this);
             }
 
             return result;
         }
-
-        Debug.Log($"[BoardModelImpl] - special attacked failed");
 
         return false;
     }
@@ -255,7 +247,35 @@ public class BoardModelImpl : IBoardModel
     public void SwitchTurn()
     {
         UnSelectPiece();
+        if (KingCornered()) { return; }
         _bluesTurn = !_bluesTurn;
+        ChangeBorder();
+    }
+
+    public bool KingCornered()
+    {
+        foreach (AAttackingPiece king in _kingList)
+        {
+            if (king.GetValidMoves().Count == 0)
+            {
+                if (king.Team == Team.Blue)
+                {
+                    GameState.OnGameWon?.Invoke(Team.Red);
+                }
+                else
+                {
+                    GameState.OnGameWon?.Invoke(Team.Blue);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ChangeBorder()
+    {
         OnChangeTurn?.Invoke(_bluesTurn);
     }
 
@@ -292,31 +312,30 @@ public class BoardModelImpl : IBoardModel
         _createTiles.ChangeToWater(_allTiles);
     }
 
-    private bool ZeroPiecesLeft(Team team)
+    private bool ZeroPiecesLeftOfType(AAttackingPiece target)
     {
-        int bows = 0;
-        int swords = 0;
-        int pegasus = 0;
+        int pieceType = 0;
+        AAttackingPiece king = null;
 
         foreach (AAttackingPiece piece in _allPieces)
         {
-            if (piece.Team == team && piece.IsAlive == true)
+            if (piece.Team == target.Team && piece.IsAlive == true && piece.PieceType == target.PieceType)
             {
-                switch (piece.PieceType)
-                {
-                    case PieceType.Bow:
-                        bows++;
-                        break;
-                    case PieceType.Sword:
-                        swords++;
-                        break;
-                    case PieceType.Pegasus:
-                        pegasus++;
-                        break;
-                }
+                pieceType++;
+                king = piece;
             }
         }
 
-        return (bows == 0) || (swords == 0) || (pegasus == 0);
+        if (pieceType == 1)
+        {
+            if (king != null)
+            {
+                king.BecomeKing();
+                _kingList.Add(king);
+                Debug.Log("[BoardModelImpl] - Should become king");
+            }
+        }
+
+        return pieceType == 0;
     }
 }

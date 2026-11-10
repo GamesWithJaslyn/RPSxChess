@@ -19,14 +19,14 @@ public class PieceTests
         _boardModel = new BoardModelImpl();
 
         _blueBow = new AAttackingPiece(39, PieceType.Bow, Team.Blue,
-                    PieceType.Pegasus, _boardModel);
+                    PieceType.Pegasus, PieceType.Sword, _boardModel);
         _redBow = new AAttackingPiece(28, PieceType.Bow, Team.Red,
-                    PieceType.Pegasus, _boardModel);
+                    PieceType.Pegasus, PieceType.Sword, _boardModel);
 
         _blueTarget = new AAttackingPiece(38, PieceType.Pegasus, Team.Red,
-                    PieceType.Sword, _boardModel);
+                    PieceType.Sword, PieceType.Bow, _boardModel);
         _redTarget = new AAttackingPiece(27, PieceType.Pegasus, Team.Blue,
-                    PieceType.Sword, _boardModel);
+                    PieceType.Sword, PieceType.Bow, _boardModel);
 
         _boardModel.AddPiece(_blueBow);
         _boardModel.AddPiece(_redBow);

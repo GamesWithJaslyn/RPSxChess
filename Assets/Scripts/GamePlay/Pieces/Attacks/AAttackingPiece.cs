@@ -10,31 +10,39 @@ using UnityEngine;
 public class AAttackingPiece : PieceModelImpl, IPieceModel
 {
     public PieceType TargetType { get; private set; }
+    public PieceType AttackerType { get; set; }
     private bool _hasShownArrow = false;
+    public bool IsKing { get; private set; }
     public event Func<IPieceModel, Task> OnArrowShot;
     public event Action OnShowArrow;
     public event Action OnHideArrow;
     public event Action<IPieceModel> OnArrowHitTarget;
+    // public event Action OnBecomeKing;
 
     public AAttackingPiece(int pos, PieceType pieceType, Team team,
-     PieceType targetType, IBoardModel model) : base(pos, pieceType, team, model)
+     PieceType targetType, PieceType Predator, IBoardModel model) : base(pos, pieceType, team, model)
     {
         TargetType = targetType;
+        AttackerType = Predator;
+        IsKing = false;
     }
 
     public void ChangeTarget(PieceType type)
     {
-        switch (type)
+        if (!IsKing)
         {
-            case PieceType.Bow:
-                TargetType = PieceType.Pegasus;
-                break;
-            case PieceType.Sword:
-                TargetType = PieceType.Bow;
-                break;
-            case PieceType.Pegasus:
-                TargetType = PieceType.Sword;
-                break;
+            switch (type)
+            {
+                case PieceType.Bow:
+                    TargetType = PieceType.Pegasus;
+                    break;
+                case PieceType.Sword:
+                    TargetType = PieceType.Bow;
+                    break;
+                case PieceType.Pegasus:
+                    TargetType = PieceType.Sword;
+                    break;
+            }
         }
     }
 
@@ -42,7 +50,6 @@ public class AAttackingPiece : PieceModelImpl, IPieceModel
     {
         if (PieceType == PieceType.Bow)
         {
-            Debug.Log("[AAttackingPiece] - Showing arrow for Bow piece.");
             _hasShownArrow = true;
         }
         else
@@ -50,6 +57,12 @@ public class AAttackingPiece : PieceModelImpl, IPieceModel
             HideArrow();
             return;
         }
+    }
+
+    public void BecomeKing()
+    {
+        IsKing = true;
+        Debug.Log("[AAttackingPiece] - became king");
     }
 
     public void HideArrow()
@@ -95,7 +108,6 @@ public class AAttackingPiece : PieceModelImpl, IPieceModel
 
     public void ResetArrow()
     {
-        Debug.Log("[AAttackingPiece] - Hidding arrow for Bow piece.");
         _hasShownArrow = false;
     }
 }

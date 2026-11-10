@@ -93,7 +93,7 @@
 
 //         _boardModel.SelectPiece(14);
 //         _boardModel.MovePiece(3);
-//        // _boardModel.SelectPiece(1);
+//         _boardModel.SelectPiece(1);
 //         _boardModel.ChangePieceType(-3);
 
 //         Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
@@ -106,7 +106,7 @@
 
 //         Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
 
-//        Assert.Throws<System.ArgumentException>(() => _boardModel.ChangePieceType(-1));
+//         Assert.Throws<System.ArgumentException>(() => _boardModel.ChangePieceType(-1));
 
 //         Assert.AreEqual(-3, _boardModel.SelectPiece(3).GetPieceType());
 //     }

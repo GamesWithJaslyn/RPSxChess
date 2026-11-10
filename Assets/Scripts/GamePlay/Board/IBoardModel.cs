@@ -8,10 +8,13 @@ public interface IBoardModel
 {
     event Action<bool> OnChangeTurn;
     List<PieceType> SpecialAttackers { get; }
+    bool _bluesTurn { get; }
     /// <summary>
     /// Unselects the previously selected IPiece.
     /// </summary>
     void UnSelectPiece();
+
+    void ChangeBorder();
 
     /// <summary>
     /// Selects an IPieceModel.

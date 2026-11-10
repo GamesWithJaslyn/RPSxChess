@@ -1,0 +1,144 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f48617e226c33401f9f3d0ca1fafd4d1, type: 3}
+  m_Name: Color_Data Base
+  m_EditorClassIdentifier: 
+  Default_Local:
+    serializedVersion: 2
+    rgba: 4287711749
+  Default_Online:
+    serializedVersion: 2
+    rgba: 4278222562
+  Default_Options:
+    serializedVersion: 2
+    rgba: 4278979674
+  Default_Quit:
+    serializedVersion: 2
+    rgba: 4284454707
+  Default_BaseTile:
+    serializedVersion: 2
+    rgba: 4285633247
+  Default_OffesetTile:
+    serializedVersion: 2
+    rgba: 4282927287
+  Default_Font: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
+  Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
+  Default_BlueTeam:
+    serializedVersion: 2
+    rgba: 4288765992
+  Default_RedTeam:
+    serializedVersion: 2
+    rgba: 4279178654
+  Local_Hover:
+    serializedVersion: 2
+    rgba: 4290510817
+  Local_Online:
+    serializedVersion: 2
+    rgba: 4289441633
+  Local_Options:
+    serializedVersion: 2
+    rgba: 4284372486
+  Local_Quit:
+    serializedVersion: 2
+    rgba: 4278190080
+  Local_BaseTile:
+    serializedVersion: 2
+    rgba: 4288235271
+  Local_OffesetTile:
+    serializedVersion: 2
+    rgba: 4285405696
+  Local_Font: {fileID: 11400000, guid: 50bad7b5e99504892b8e93bffb373094, type: 2}
+  Local_ShadowFont: {fileID: 11400000, guid: be4ca0185f519479ebd4456a6656907d, type: 2}
+  Local_BlueTeam:
+    serializedVersion: 2
+    rgba: 4286171056
+  Local_RedTeam:
+    serializedVersion: 2
+    rgba: 4294029191
+  Online_Local:
+    serializedVersion: 2
+    rgba: 4282954741
+  Online_Hover:
+    serializedVersion: 2
+    rgba: 4290966518
+  Online_Options:
+    serializedVersion: 2
+    rgba: 4281627875
+  Online_Quit:
+    serializedVersion: 2
+    rgba: 4278200913
+  Online_BaseTile:
+    serializedVersion: 2
+    rgba: 4290561681
+  Online_OffesetTile:
+    serializedVersion: 2
+    rgba: 4289305931
+  Online_Font: {fileID: 11400000, guid: 09c454764de3c495fbaa4e0de2289fa5, type: 2}
+  Online_ShadowFont: {fileID: 11400000, guid: f0fd6e876b02d42f2ac2f179a2a10e12, type: 2}
+  Online_BlueTeam:
+    serializedVersion: 2
+    rgba: 4285679625
+  Online_RedTeam:
+    serializedVersion: 2
+    rgba: 4282954741
+  Options_Local:
+    serializedVersion: 2
+    rgba: 4281743003
+  Options_Online:
+    serializedVersion: 2
+    rgba: 4290292479
+  Options_Hover:
+    serializedVersion: 2
+    rgba: 4292860159
+  Options_Quit:
+    serializedVersion: 2
+    rgba: 4294967295
+  Options_BaseTile:
+    serializedVersion: 2
+    rgba: 4292870128
+  Options_OffesetTile:
+    serializedVersion: 2
+    rgba: 4287553448
+  Options_Font: {fileID: 11400000, guid: 26f9edeb0692c45e5984fac16a0eb4dc, type: 2}
+  Options_ShadowFont: {fileID: 11400000, guid: 2c05c46c9b9ba403695179f2d47e04fc, type: 2}
+  Options_BlueTeam:
+    serializedVersion: 2
+    rgba: 4279464754
+  Options_RedTeam:
+    serializedVersion: 2
+    rgba: 4285749459
+  Quit_Local:
+    serializedVersion: 2
+    rgba: 4278717988
+  Quit_Online:
+    serializedVersion: 2
+    rgba: 4280429389
+  Quit_Options:
+    serializedVersion: 2
+    rgba: 4281880199
+  Quit_Hover:
+    serializedVersion: 2
+    rgba: 4288333034
+  Quit_BaseTile:
+    serializedVersion: 2
+    rgba: 4279903060
+  Quit_OffesetTile:
+    serializedVersion: 2
+    rgba: 4279178289
+  Quit_Font: {fileID: 11400000, guid: 4b1d503bea7504e30b2787792f458819, type: 2}
+  Quit_ShadowFont: {fileID: 11400000, guid: a7e6573665e424615b0884eb516fb4b4, type: 2}
+  Quit_BlueTeam:
+    serializedVersion: 2
+    rgba: 4289055726
+  Quit_RedTeam:
+    serializedVersion: 2
+    rgba: 4278210979

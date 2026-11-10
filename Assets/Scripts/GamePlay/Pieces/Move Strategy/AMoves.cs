@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mono.CSharp;
 using UnityEngine;
 
 enum BoardEdge { Top, Bottom, Left, Right }
@@ -18,27 +19,34 @@ public abstract class AMoves : IMoveStrategy
 
         foreach (int targetTile in possibleMoves)
         {
-            //if tile is not inside this board (out of bounds)
+            // if tile is not inside this board (out of bounds)
             if (!board.IsInside(targetTile)) { continue; }
 
             ITileModel tile = board.GetTileAt(targetTile);
-            //if tile is not enterable
+            // if tile is not enterable
             if (!tile.Rule.CanEnter(tile, piece)) { continue; }
 
-            IPieceModel targetPiece = board.GetTileAt(targetTile).Occupant;
-            if (targetPiece == null || targetPiece.IsAlive == false)
+            // if the current piece is a king and on an enemy tile
+            if (OnEnemyTileAsKing(board, (AAttackingPiece)piece, targetTile)) { continue; }
+
+            if (!OnEnemyTileAsKing(board, (AAttackingPiece)piece, targetTile))
             {
-                EmptyTile(piece, targetTile, moves);
-                continue;
-            }
-            else if (targetPiece.Team != piece.Team && targetPiece.IsAlive)
-            {
-                if (piece is AAttackingPiece attacking)
+                IPieceModel targetPiece = board.GetTileAt(targetTile).Occupant;
+                if (targetPiece == null || targetPiece.IsAlive == false)
                 {
-                    TargetOnTile(targetPiece, attacking, targetTile, moves);
+                    EmptyTile(piece, targetTile, moves);
                     continue;
                 }
+                else if (targetPiece.Team != piece.Team && targetPiece.IsAlive)
+                {
+                    if (piece is AAttackingPiece attacking)
+                    {
+                        TargetOnTile(targetPiece, attacking, targetTile, moves);
+                        continue;
+                    }
+                }
             }
+
         }
 
         return moves;
@@ -73,6 +81,53 @@ public abstract class AMoves : IMoveStrategy
              new List<MoveFlags>() { MoveFlags.None }));
         }
     }
+
+    // private List<IPieceModel> GetEnemies(IBoardModel board, AAttackingPiece thisPiece)
+    // {
+    //     List<IPieceModel> enemies = new List<IPieceModel>();
+    //     foreach (IPieceModel piece in board.GetAllPieces())
+    //     {
+    //         if (piece.PieceType == thisPiece.AttackerType)
+    //         {
+    //             enemies.Add(piece);
+    //         }
+    //     }
+    //     return enemies;
+    // }
+
+    private bool OnEnemyTileAsKing(IBoardModel board, AAttackingPiece thisPiece, int targetTile)
+    {
+        if (!thisPiece.IsKing) { return false; }
+        bool OnTile = false;
+
+        List<IPieceModel> enemies = new List<IPieceModel>();
+        Debug.Log($"[AMoves] - enemy is: {thisPiece.AttackerType}");
+        Debug.Log($"[AMoves] - enemy is: {board.GetAllPieces().Count}");
+
+
+        foreach (IPieceModel searching in board.GetAllPieces())
+        {
+            if (searching.PieceType == thisPiece.AttackerType && searching.Team != thisPiece.Team)
+            {
+                enemies.Add(searching);
+            }
+        }
+
+        foreach (IPieceModel enemy in enemies)
+        {
+            foreach (Move tile in enemy.GetValidMoves())
+            {
+                if (tile.To == targetTile) { OnTile = true; }
+            }
+        }
+
+        Debug.Log($"[AMoves] - count of enemies: {enemies.Count}");
+        Debug.Log($"[AMoves] - it is {OnTile}");
+
+        return OnTile;
+    }
+
+
 
     private Move CreateMove(int from, int to, List<MoveFlags> flags)
     {

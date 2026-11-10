@@ -9,7 +9,6 @@ public class Bow_SpecialAttack : ASpecialAttack
 
     public override List<int> GetSpecialAttackRange(IBoardModel board, IPieceModel piece)
     {
-        Debug.Log("Showing Bow Special Attack Range for piece at position: " + piece.Position);
         IsSpecialAttackReady = true;
         (int dr, int dc)[] attackRange = new (int, int)[0];
 
@@ -54,7 +53,6 @@ public class Bow_SpecialAttack : ASpecialAttack
         AAttackingPiece selectedPiece = board.GetSelectedPiece() as AAttackingPiece;
         if (selectedPiece == null || selectedPiece.PieceType != PieceType.Bow)
         {
-            Debug.Log("No Bow piece is selected for the special attack.");
             CancelSpecialAttack(board);
             return false;
         }

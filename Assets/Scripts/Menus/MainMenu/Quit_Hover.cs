@@ -1,14 +1,9 @@
 using UnityEngine;
-using TMPro;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class Quit_Hover : AButtons
 {
-    [Header("Fonts")]
-    [SerializeField] private TMP_FontAsset Quit_Font;
-    [SerializeField] private TMP_FontAsset Quit_ShadowFont;
-
+    public Color_DataBase Color;
     public void OnHoverEnter()
     {
         ChangeColorFont();
@@ -21,17 +16,17 @@ public class Quit_Hover : AButtons
 
     private void ChangeColorFont()
     {
-        Local = new Color32(36, 14, 8, 255);
-        Online = new Color32(77, 43, 34, 255);
-        Options = new Color32(135, 78, 56, 255);
-        Quit = new Color32(234, 196, 154, 255);
-        BaseTile = new Color32(84, 35, 26, 255);
-        OffsetTile = new Color32(49, 20, 15, 255);
-        BowColor = new Color32(238, 203, 165, 255);
-        PegasusColor = new Color32(163, 81, 0, 255);
+        Local = Color.Quit_Local;
+        Online = Color.Quit_Online;
+        Options = Color.Quit_Options;
+        Quit = Color.Quit_Hover;
+        BaseTile = Color.Quit_BaseTile;
+        OffsetTile = Color.Quit_OffesetTile;
+        BowColor = Color.Quit_BlueTeam;
+        PegasusColor = Color.Quit_RedTeam;
 
-        Title = Quit_Font;
-        ShadowFont = Quit_ShadowFont;
+        Title = Color.Quit_Font;
+        ShadowFont = Color.Quit_ShadowFont;
     }
 
     public override void OnHoverExit()

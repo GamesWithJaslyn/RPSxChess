@@ -102,16 +102,38 @@ public class PieceModelImpl : IPieceModel
 
     public void SetPieceType(PieceType type)
     {
-        PieceType = type;
-
-        if (this is AAttackingPiece aAttacking)
+        if (this is AAttackingPiece attack)
         {
-            aAttacking.ChangeTarget(PieceType);
-        }
+            if (!attack.IsKing)
+            {
+                PieceType = type;
+                switch (PieceType)
+                {
+                    case PieceType.Bow:
+                        attack.AttackerType = PieceType.Sword;
+                        break;
+                    case PieceType.Sword:
+                        attack.AttackerType = PieceType.Pegasus;
+                        break;
+                    case PieceType.Pegasus:
+                        attack.AttackerType = PieceType.Bow;
+                        break;
+                }
 
-        SetMoveStrategy();
-        SetSpecialAttack();
-        OnChangeInto?.Invoke();
+
+                attack.ChangeTarget(PieceType);
+                SetMoveStrategy();
+                SetSpecialAttack();
+                OnChangeInto?.Invoke();
+            }
+        }
+        else
+        {
+            PieceType = type;
+            SetMoveStrategy();
+            SetSpecialAttack();
+            OnChangeInto?.Invoke();
+        }
     }
 
     private void SetMoveStrategy()

@@ -1,14 +1,8 @@
-using UnityEngine;
-using TMPro;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class Online_Hover : AButtons
 {
-    [Header("Fonts")]
-    [SerializeField] private TMP_FontAsset Online_Font;
-    [SerializeField] private TMP_FontAsset Online_ShadowFont;
-
+    public Color_DataBase Color;
     public void OnHoverEnter()
     {
         ChangeColorFont();
@@ -27,17 +21,17 @@ public class Online_Hover : AButtons
 
     private void ChangeColorFont()
     {
-        Local = new Color32(245, 179, 72, 255);
-        Online = new Color32(246, 243, 194, 255);
-        Options = new Color32(227, 116, 52, 255);
-        Quit = new Color32(81, 42, 0, 255);
-        BaseTile = new Color32(145, 198, 188, 255);
-        OffsetTile = new Color32(75, 157, 169, 255);
-        BowColor = new Color32(245, 179, 72, 255);
-        PegasusColor = new Color32(9, 72, 114, 255);
+        Local = Color.Online_Local;
+        Online = Color.Online_Hover;
+        Options = Color.Online_Options;
+        Quit = Color.Online_Quit;
+        BaseTile = Color.Online_BaseTile;
+        OffsetTile = Color.Online_OffesetTile;
+        BowColor = Color.Online_BlueTeam;
+        PegasusColor = Color.Online_RedTeam;
 
-        Title = Online_Font;
-        ShadowFont = Online_ShadowFont;
+        Title = Color.Online_Font;
+        ShadowFont = Color.Online_ShadowFont;
     }
 
     private void ButtonChange()

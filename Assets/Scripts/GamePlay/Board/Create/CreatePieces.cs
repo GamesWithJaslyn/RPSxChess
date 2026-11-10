@@ -34,17 +34,17 @@ public class CreatePieces
             if ((i < 3) || (i >= 11 && i < 14))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Bow, Team.Blue,
-                 PieceType.Pegasus, _boardModel));
+                 PieceType.Pegasus, PieceType.Sword, _boardModel));
             }
             else if ((i >= 4 && i < 7) || (i >= 15 && i < 18))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Sword, Team.Blue,
-                PieceType.Bow, _boardModel));
+                PieceType.Bow, PieceType.Pegasus, _boardModel));
             }
             else if ((i >= 8 && i < 11) || (i >= 19 && i < 22))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Pegasus, Team.Blue,
-                PieceType.Sword, _boardModel));
+                PieceType.Sword, PieceType.Bow, _boardModel));
             }
         }
 
@@ -60,17 +60,17 @@ public class CreatePieces
             if ((i < 102) || (i >= 110 && i < 113))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Bow, Team.Red,
-                PieceType.Pegasus, _boardModel));
+                PieceType.Pegasus, PieceType.Sword, _boardModel));
             }
             else if ((i >= 103 && i < 106) || (i >= 114 && i < 117))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Sword, Team.Red,
-                PieceType.Bow, _boardModel));
+                PieceType.Bow, PieceType.Pegasus, _boardModel));
             }
             else if ((i >= 107 && i < 110) || (i >= 118 && i < 121))
             {
                 pieces.Add(new AAttackingPiece(i, PieceType.Pegasus, Team.Red,
-                PieceType.Sword, _boardModel));
+                PieceType.Sword, PieceType.Bow, _boardModel));
             }
         }
 

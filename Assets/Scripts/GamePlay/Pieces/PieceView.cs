@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,12 +8,15 @@ using UnityEngine;
 public class PieceView : MonoBehaviour
 {
     public IPieceModel Model { get; private set; }
-    [SerializeField] private Color _teamColor;
     private Transform _color;
     private Transform _pieceType;
     public Arrow _arrow;
 
-    public void Init(IPieceModel model)
+    private static Color32 S_BlueTeam;
+    private static Color32 S_RedTeam;
+
+
+    public void Init(IPieceModel model, Color_DataBase Color)
     {
         _color = gameObject.transform.Find("Color");
         _pieceType = gameObject.transform.Find("Type");
@@ -28,15 +30,29 @@ public class PieceView : MonoBehaviour
         _arrow.SetPieceViewAndModel(this, attack);
         _arrow.OnArrowReachedTarget += attack.ReachedTarget;
 
+
+        UpdateTeamColor(Color.Default_BlueTeam, Color.Default_RedTeam);
+        UpdateColor();
+
+    }
+
+    public static void UpdateTeamColor(Color32 blue, Color32 red)
+    {
+        S_BlueTeam = blue;
+        S_RedTeam = red;
+    }
+
+
+    public void UpdateColor()
+    {
         if (Model.Team == Team.Blue)
         {
-            _color.GetComponent<SpriteRenderer>().color = PieceImageDataBase.BlueTeamColor;
+            _color.GetComponent<SpriteRenderer>().color = S_BlueTeam;
         }
         else
         {
-            _color.GetComponent<SpriteRenderer>().color = PieceImageDataBase.RedTeamColor;
+            _color.GetComponent<SpriteRenderer>().color = S_RedTeam;
         }
-
     }
 
     public void SetDead()
@@ -91,7 +107,6 @@ public class PieceView : MonoBehaviour
     {
         _color.gameObject.SetActive(isItTrue);
         _pieceType.gameObject.SetActive(isItTrue);
-        //this.enabled = isItTrue;
     }
 
     private void AddEvents()

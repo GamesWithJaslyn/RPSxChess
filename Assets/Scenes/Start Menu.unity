@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0.2, g: 0.5921569, b: 0.37254903, a: 1}
-    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.84705883, b: 0.8745098, a: 1}
     m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 0.2, g: 0.5921569, b: 0.37254903, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -463,8 +463,7 @@ MonoBehaviour:
   PegasusImage: {fileID: 1739165614}
   Default_Title: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
   Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
-  Options_Font: {fileID: 11400000, guid: 26f9edeb0692c45e5984fac16a0eb4dc, type: 2}
-  Options_ShadowFont: {fileID: 11400000, guid: 2c05c46c9b9ba403695179f2d47e04fc, type: 2}
+  Color: {fileID: 11400000, guid: 88c8a17aa288f4c0ba50ce05ba966b6e, type: 2}
 --- !u!1001 &227102071
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1036,8 +1035,7 @@ MonoBehaviour:
   PegasusImage: {fileID: 1739165614}
   Default_Title: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
   Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
-  Online_Font: {fileID: 11400000, guid: 09c454764de3c495fbaa4e0de2289fa5, type: 2}
-  Online_ShadowFont: {fileID: 11400000, guid: f0fd6e876b02d42f2ac2f179a2a10e12, type: 2}
+  Color: {fileID: 11400000, guid: 88c8a17aa288f4c0ba50ce05ba966b6e, type: 2}
 --- !u!1 &398928784
 GameObject:
   m_ObjectHideFlags: 0
@@ -1147,7 +1145,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.8, y: 15.46}
+  m_AnchoredPosition: {x: 0.00000071525574, y: 0.0000009536743}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &460732212
@@ -2212,8 +2210,7 @@ MonoBehaviour:
   PegasusImage: {fileID: 1739165614}
   Default_Title: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
   Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
-  Quit_Font: {fileID: 11400000, guid: 4b1d503bea7504e30b2787792f458819, type: 2}
-  Quit_ShadowFont: {fileID: 11400000, guid: a7e6573665e424615b0884eb516fb4b4, type: 2}
+  Color: {fileID: 11400000, guid: 88c8a17aa288f4c0ba50ce05ba966b6e, type: 2}
 --- !u!1 &908240043
 GameObject:
   m_ObjectHideFlags: 0
@@ -3015,8 +3012,7 @@ MonoBehaviour:
   PegasusImage: {fileID: 1739165614}
   Default_Title: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
   Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
-  Local_Font: {fileID: 11400000, guid: 50bad7b5e99504892b8e93bffb373094, type: 2}
-  Local_ShadowFont: {fileID: 11400000, guid: be4ca0185f519479ebd4456a6656907d, type: 2}
+  Color: {fileID: 11400000, guid: 88c8a17aa288f4c0ba50ce05ba966b6e, type: 2}
 --- !u!1 &1224047015
 GameObject:
   m_ObjectHideFlags: 0
@@ -3694,8 +3690,8 @@ RectTransform:
   m_GameObject: {fileID: 1615281598}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 921441677}
   - {fileID: 1624237004}
@@ -3703,10 +3699,10 @@ RectTransform:
   - {fileID: 626648065}
   m_Father: {fileID: 241951119}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 191.04, y: -76.726006}
-  m_SizeDelta: {x: 262.58, y: -155.76799}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 170.6, y: -84.4}
+  m_SizeDelta: {x: 262.57996, y: 314.232}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1615281600
 MonoBehaviour:
@@ -3780,180 +3776,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1624237003}
   m_CullTransparentMesh: 1
---- !u!1 &1624719549
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1624719551}
-  - component: {fileID: 1624719550}
-  m_Layer: 0
-  m_Name: MainMenu Color DataBase
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1624719550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1624719549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f48617e226c33401f9f3d0ca1fafd4d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Default_Local:
-    serializedVersion: 2
-    rgba: 4287711749
-  Default_Online:
-    serializedVersion: 2
-    rgba: 4278222562
-  Default_Options:
-    serializedVersion: 2
-    rgba: 4284454707
-  Default_Quit:
-    serializedVersion: 2
-    rgba: 4278979674
-  Default_BaseTile:
-    serializedVersion: 2
-    rgba: 4285633247
-  Default_OffesetTile:
-    serializedVersion: 2
-    rgba: 4282927287
-  Default_Font: {fileID: 11400000, guid: 3027d5bd4bea5456eafd91c41901b3ed, type: 2}
-  Default_ShadowFont: {fileID: 11400000, guid: 0fef342cb5911444ea199b9cbd91dbea, type: 2}
-  Default_BowColor:
-    serializedVersion: 2
-    rgba: 4287122454
-  Default_PegasusColor:
-    serializedVersion: 2
-    rgba: 4278190196
-  Local_Hover:
-    serializedVersion: 2
-    rgba: 4290510817
-  Local_Online:
-    serializedVersion: 2
-    rgba: 4289441633
-  Local_Options:
-    serializedVersion: 2
-    rgba: 4284372486
-  Local_Quit:
-    serializedVersion: 2
-    rgba: 4278190080
-  Local_BaseTile:
-    serializedVersion: 2
-    rgba: 4288235271
-  Local_OffesetTile:
-    serializedVersion: 2
-    rgba: 4285405696
-  Local_Font: {fileID: 11400000, guid: 50bad7b5e99504892b8e93bffb373094, type: 2}
-  Local_ShadowFont: {fileID: 11400000, guid: be4ca0185f519479ebd4456a6656907d, type: 2}
-  Local_BowColor:
-    serializedVersion: 2
-    rgba: 4286171056
-  Local_PegasusColor:
-    serializedVersion: 2
-    rgba: 4294029191
-  Online_Local:
-    serializedVersion: 2
-    rgba: 4282954741
-  Online_Hover:
-    serializedVersion: 2
-    rgba: 4290966518
-  Online_Options:
-    serializedVersion: 2
-    rgba: 4281627875
-  Online_Quit:
-    serializedVersion: 2
-    rgba: 4278200913
-  Online_BaseTile:
-    serializedVersion: 2
-    rgba: 4290561681
-  Online_OffesetTile:
-    serializedVersion: 2
-    rgba: 4289305931
-  Online_Font: {fileID: 11400000, guid: 09c454764de3c495fbaa4e0de2289fa5, type: 2}
-  Online_ShadowFont: {fileID: 11400000, guid: f0fd6e876b02d42f2ac2f179a2a10e12, type: 2}
-  Online_BowColor:
-    serializedVersion: 2
-    rgba: 4282954741
-  Online_PegasusColor:
-    serializedVersion: 2
-    rgba: 4285679625
-  Options_Local:
-    serializedVersion: 2
-    rgba: 4281743003
-  Options_Online:
-    serializedVersion: 2
-    rgba: 4290292479
-  Options_Hover:
-    serializedVersion: 2
-    rgba: 4292860159
-  Options_Quit:
-    serializedVersion: 2
-    rgba: 4294967295
-  Options_BaseTile:
-    serializedVersion: 2
-    rgba: 4292870128
-  Options_OffesetTile:
-    serializedVersion: 2
-    rgba: 4287553448
-  Options_Font: {fileID: 11400000, guid: 26f9edeb0692c45e5984fac16a0eb4dc, type: 2}
-  Options_ShadowFont: {fileID: 11400000, guid: 2c05c46c9b9ba403695179f2d47e04fc, type: 2}
-  Options_BowColor:
-    serializedVersion: 2
-    rgba: 4285749459
-  Options_PegasusColor:
-    serializedVersion: 2
-    rgba: 4279464754
-  Quit_Local:
-    serializedVersion: 2
-    rgba: 4278717988
-  Quit_Online:
-    serializedVersion: 2
-    rgba: 4280429389
-  Quit_Options:
-    serializedVersion: 2
-    rgba: 4281880199
-  Quit_Hover:
-    serializedVersion: 2
-    rgba: 4288333034
-  Quit_BaseTile:
-    serializedVersion: 2
-    rgba: 4279903060
-  Quit_OffesetTile:
-    serializedVersion: 2
-    rgba: 4279178289
-  Quit_Font: {fileID: 11400000, guid: 4b1d503bea7504e30b2787792f458819, type: 2}
-  Quit_ShadowFont: {fileID: 11400000, guid: a7e6573665e424615b0884eb516fb4b4, type: 2}
-  Quit_BowColor:
-    serializedVersion: 2
-    rgba: 4289055726
-  Quit_PegasusColor:
-    serializedVersion: 2
-    rgba: 4278210979
---- !u!4 &1624719551
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1624719549}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1662504711
 GameObject:
   m_ObjectHideFlags: 0
@@ -4760,7 +4582,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 727227459}
-  - {fileID: 1624719551}
   - {fileID: 684145713}
   - {fileID: 241951119}
   - {fileID: 1116683075}
